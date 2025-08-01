@@ -27,30 +27,30 @@ const formSchema = z.object({
   schoolName: z.string().min(2, { message: 'O nome da escola é obrigatório.' }),
   responsibleParty: z.string().min(2, { message: 'O nome do responsável é obrigatório.' }),
   phoneNumber: z.string().min(8, { message: 'O número de telefone é obrigatório.' }),
-  deliveredItems: z.string().min(3, { message: 'Descreva os itens entregues.' }),
+  collectedItems: z.string().min(3, { message: 'Descreva os itens recolhidos.' }),
   observations: z.string().optional(),
 });
 
-type DeliveryFormValues = z.infer<typeof formSchema>;
+type CollectionFormValues = z.infer<typeof formSchema>;
 
-interface DeliveryFormProps {
-  onSubmit: (data: DeliveryFormValues) => void;
+interface CollectionFormProps {
+  onSubmit: (data: CollectionFormValues) => void;
   allSchoolNames: string[];
 }
 
-export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
+export function CollectionForm({ onSubmit, allSchoolNames }: CollectionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
-  const form = useForm<DeliveryFormValues>({
+  const form = useForm<CollectionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       schoolName: '',
       responsibleParty: '',
       phoneNumber: '',
-      deliveredItems: '',
+      collectedItems: '',
       observations: '',
     },
   });
@@ -90,7 +90,7 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
   }, [schoolNameValue, fetchSuggestions]);
 
 
-  const handleSubmit = (data: DeliveryFormValues) => {
+  const handleSubmit = (data: CollectionFormValues) => {
     setIsSubmitting(true);
     onSubmit(data);
     form.reset();
@@ -100,7 +100,7 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
   return (
     <Card className="w-full shadow-lg rounded-xl">
       <CardHeader>
-        <CardTitle className="font-headline">Nova Entrega</CardTitle>
+        <CardTitle className="font-headline">Novo Recolhimento</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -180,7 +180,7 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
                   <FormItem>
                     <FormLabel>Responsável</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nome de quem recebeu" {...field} />
+                      <Input placeholder="Nome de quem entregou" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -202,12 +202,12 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
             </div>
             <FormField
               control={form.control}
-              name="deliveredItems"
+              name="collectedItems"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Itens Entregues</FormLabel>
+                  <FormLabel>Itens Recolhidos</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Ex: 2 caixas de livros, 1 projetor" {...field} />
+                    <Textarea placeholder="Ex: 1 projetor com defeito, 50 provas" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -228,7 +228,7 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
             />
             <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto">
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Registrar Entrega
+              Registrar Recolhimento
             </Button>
           </form>
         </Form>
