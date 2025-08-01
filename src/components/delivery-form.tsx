@@ -27,7 +27,6 @@ const formSchema = z.object({
   schoolName: z.string().min(2, { message: 'O nome da escola é obrigatório.' }),
   responsibleParty: z.string().min(2, { message: 'O nome do responsável é obrigatório.' }),
   phoneNumber: z.string().min(8, { message: 'O número de telefone é obrigatório.' }),
-  deliveredItems: z.string().min(3, { message: 'Descreva os itens entregues.' }),
   observations: z.string().optional(),
 });
 
@@ -50,7 +49,6 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
       schoolName: '',
       responsibleParty: '',
       phoneNumber: '',
-      deliveredItems: '',
       observations: '',
     },
   });
@@ -200,19 +198,6 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name="deliveredItems"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Itens Entregues</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Ex: 2 caixas de livros, 1 projetor" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="observations"

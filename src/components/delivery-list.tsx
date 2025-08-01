@@ -4,9 +4,10 @@ import type { Delivery } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
-import { CheckCircle2, Clock, MapPin, Phone, User, Package, MessageSquare } from 'lucide-react';
+import { CheckCircle2, Clock, Phone, User, MessageSquare } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 interface DeliveryListProps {
   deliveries: Delivery[];
@@ -66,13 +67,6 @@ export function DeliveryList({ deliveries }: DeliveryListProps) {
                     <Phone className="h-4 w-4 text-muted-foreground" />
                     <span>Telefone: <strong>{delivery.phoneNumber}</strong></span>
                   </div>
-                   <div className="flex items-start gap-3">
-                    <Package className="h-4 w-4 text-muted-foreground mt-1" />
-                    <div>
-                      <p className="text-muted-foreground">Itens Entregues:</p>
-                      <p className="font-semibold">{delivery.deliveredItems}</p>
-                    </div>
-                  </div>
                   {delivery.observations && (
                     <div className="flex items-start gap-3">
                       <MessageSquare className="h-4 w-4 text-muted-foreground mt-1" />
@@ -90,14 +84,4 @@ export function DeliveryList({ deliveries }: DeliveryListProps) {
       </Accordion>
     </div>
   );
-}
-
-function cn(...inputs: any[]) {
-  let result = '';
-  for (let i = 0; i < inputs.length; i++) {
-    if (inputs[i]) {
-      result += (result ? ' ' : '') + inputs[i];
-    }
-  }
-  return result;
 }

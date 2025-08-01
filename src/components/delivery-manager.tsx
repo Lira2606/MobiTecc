@@ -63,23 +63,22 @@ export function DeliveryManager() {
     });
 
     // Simulate network requests for deliveries
-    for (const delivery of pendingDeliveries) {
-      await new Promise(resolve => setTimeout(resolve, 400));
-      console.log(`Simulating sync for delivery to ${delivery.schoolName}`);
+    if (pendingDeliveries.length > 0) {
+      await new Promise(resolve => setTimeout(resolve, 400 * pendingDeliveries.length));
+      console.log(`Simulating sync for ${pendingDeliveries.length} deliveries`);
+      setDeliveries(prev =>
+        prev.map(d => (pendingDeliveries.find(pd => pd.id === d.id) ? { ...d, synced: true } : d))
+      );
     }
-     setDeliveries(prev =>
-      prev.map(d => (pendingDeliveries.find(pd => pd.id === d.id) ? { ...d, synced: true } : d))
-    );
-
+    
     // Simulate network requests for collections
-    for (const collection of pendingCollections) {
-      await new Promise(resolve => setTimeout(resolve, 400));
-      console.log(`Simulating sync for collection from ${collection.schoolName}`);
+    if (pendingCollections.length > 0) {
+      await new Promise(resolve => setTimeout(resolve, 400 * pendingCollections.length));
+      console.log(`Simulating sync for ${pendingCollections.length} collections`);
+      setCollections(prev =>
+          prev.map(c => (pendingCollections.find(pc => pc.id === c.id) ? { ...c, synced: true } : c))
+      );
     }
-    setCollections(prev =>
-        prev.map(c => (pendingCollections.find(pc => pc.id === c.id) ? { ...c, synced: true } : c))
-    );
-
 
     setIsSyncing(false);
     toast({

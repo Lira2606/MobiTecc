@@ -3,7 +3,6 @@ export interface Delivery {
   schoolName: string;
   responsibleParty: string;
   phoneNumber: string;
-  deliveredItems: string;
   observations?: string;
   createdAt: string; // ISO string
   synced: boolean;
