@@ -26,6 +26,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 const formSchema = z.object({
   schoolName: z.string().min(2, { message: 'O nome da escola é obrigatório.' }),
   responsibleParty: z.string().min(2, { message: 'O nome do responsável é obrigatório.' }),
+  role: z.string().min(2, { message: 'A função é obrigatória.' }),
   phoneNumber: z.string().min(8, { message: 'O número de telefone é obrigatório.' }),
   collectedItems: z.string().min(3, { message: 'Descreva os itens recolhidos.' }),
   observations: z.string().optional(),
@@ -49,6 +50,7 @@ export function CollectionForm({ onSubmit, allSchoolNames }: CollectionFormProps
     defaultValues: {
       schoolName: '',
       responsibleParty: '',
+      role: '',
       phoneNumber: '',
       collectedItems: '',
       observations: '',
@@ -186,6 +188,21 @@ export function CollectionForm({ onSubmit, allSchoolNames }: CollectionFormProps
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Função</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Professor(a), Coordenador(a)" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
                 name="phoneNumber"

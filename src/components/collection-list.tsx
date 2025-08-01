@@ -4,7 +4,7 @@ import type { Collection } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
-import { CheckCircle2, Clock, Phone, User, Package, MessageSquare } from 'lucide-react';
+import { CheckCircle2, Clock, Phone, User, Package, MessageSquare, Briefcase } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -63,6 +63,10 @@ export function CollectionList({ collections }: CollectionListProps) {
                   <div className="flex items-center gap-3">
                     <User className="h-4 w-4 text-muted-foreground" />
                     <span>Responsável: <strong>{collection.responsibleParty}</strong></span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Briefcase className="h-4 w-4 text-muted-foreground" />
+                    <span>Função: <strong>{collection.role}</strong></span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="h-4 w-4 text-muted-foreground" />

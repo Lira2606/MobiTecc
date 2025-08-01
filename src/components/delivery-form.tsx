@@ -26,6 +26,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 const formSchema = z.object({
   schoolName: z.string().min(2, { message: 'O nome da escola é obrigatório.' }),
   responsibleParty: z.string().min(2, { message: 'O nome do responsável é obrigatório.' }),
+  role: z.string().min(2, { message: 'A função é obrigatória.' }),
   phoneNumber: z.string().min(8, { message: 'O número de telefone é obrigatório.' }),
   observations: z.string().optional(),
 });
@@ -48,6 +49,7 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
     defaultValues: {
       schoolName: '',
       responsibleParty: '',
+      role: '',
       phoneNumber: '',
       observations: '',
     },
@@ -186,17 +188,32 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
               />
               <FormField
                 control={form.control}
-                name="phoneNumber"
+                name="role"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Telefone</FormLabel>
+                    <FormLabel>Função</FormLabel>
                     <FormControl>
-                      <Input placeholder="(XX) XXXXX-XXXX" {...field} type="tel" />
+                      <Input placeholder="Ex: Professor(a), Coordenador(a)" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+            </div>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <FormField
+                    control={form.control}
+                    name="phoneNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Telefone</FormLabel>
+                        <FormControl>
+                          <Input placeholder="(XX) XXXXX-XXXX" {...field} type="tel" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
             </div>
             <FormField
               control={form.control}

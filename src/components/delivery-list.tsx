@@ -4,7 +4,7 @@ import type { Delivery } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
-import { CheckCircle2, Clock, Phone, User, MessageSquare } from 'lucide-react';
+import { CheckCircle2, Clock, Phone, User, MessageSquare, Briefcase } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -62,6 +62,10 @@ export function DeliveryList({ deliveries }: DeliveryListProps) {
                   <div className="flex items-center gap-3">
                     <User className="h-4 w-4 text-muted-foreground" />
                     <span>Responsável: <strong>{delivery.responsibleParty}</strong></span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Briefcase className="h-4 w-4 text-muted-foreground" />
+                    <span>Função: <strong>{delivery.role}</strong></span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="h-4 w-4 text-muted-foreground" />
