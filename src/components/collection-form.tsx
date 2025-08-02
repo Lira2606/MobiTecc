@@ -247,11 +247,11 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                     </>
                   ) : (
                      <div className="flex flex-wrap gap-2">
-                       <Button type="button" onClick={() => setShowCamera(true)} className="w-full sm:w-auto">
-                          <Camera />
-                        </Button>
                         <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full sm:w-auto">
                           <Upload className="mr-2" /> Selecionar Arquivo
+                        </Button>
+                        <Button type="button" onClick={() => setShowCamera(true)} className="w-full sm:w-auto">
+                          <Camera />
                         </Button>
                      </div>
                   )}
