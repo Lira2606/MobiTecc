@@ -85,6 +85,15 @@
       color: hsl(var(--accent));
     }
 
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none; 
+      scrollbar-width: none; 
+    }
+
     @keyframes gradientBG { 
         0% { background-position: 0% 50%; } 
         50% { background-position: 100% 50%; } 

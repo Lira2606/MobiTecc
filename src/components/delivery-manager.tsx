@@ -140,7 +140,7 @@ export function DeliveryManager() {
           onSync={handleSync}
           isOnline={isOnline}
         />
-        <main className="flex-grow p-6 overflow-y-auto transition-all duration-500">
+        <main className="flex-grow p-6 overflow-y-auto transition-all duration-500 no-scrollbar">
             {renderContent()}
         </main>
         
