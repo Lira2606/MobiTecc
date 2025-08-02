@@ -33,8 +33,8 @@ export function CollectionList({ collections }: CollectionListProps) {
       <Accordion type="single" collapsible className="w-full space-y-4">
         {collections.map(collection => (
           <AccordionItem value={collection.id} key={collection.id} className="border-none">
-            <Card className="shadow-md rounded-xl overflow-hidden">
-              <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-muted/50">
+            <Card className="shadow-md rounded-xl overflow-hidden bg-card">
+              <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-secondary/50">
                 <div className="flex justify-between items-center w-full">
                   <div className="text-left">
                     <p className="font-bold text-lg text-primary">{collection.schoolName}</p>
@@ -46,7 +46,7 @@ export function CollectionList({ collections }: CollectionListProps) {
                     variant={collection.synced ? 'default' : 'secondary'}
                     className={cn(
                       'transition-colors',
-                      collection.synced ? 'bg-accent text-accent-foreground' : ''
+                      collection.synced ? 'bg-green-500 text-white' : ''
                     )}
                   >
                     {collection.synced ? (
@@ -58,7 +58,7 @@ export function CollectionList({ collections }: CollectionListProps) {
                   </Badge>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="p-6 pt-0 bg-white">
+              <AccordionContent className="p-6 pt-0 bg-card">
                 <div className="space-y-4 text-sm">
                   <div className="flex items-center gap-3">
                     <User className="h-4 w-4 text-muted-foreground" />
@@ -76,8 +76,8 @@ export function CollectionList({ collections }: CollectionListProps) {
                     <div className="flex items-start gap-3">
                       <MessageSquare className="h-4 w-4 text-muted-foreground mt-1" />
                        <div>
-                        <p className="text-muted-foreground">Observações:</p>
-                        <p className="font-semibold">{collection.observations}</p>
+                        <p className="font-semibold">Observações:</p>
+                        <p className="text-muted-foreground">{collection.observations}</p>
                       </div>
                     </div>
                   )}

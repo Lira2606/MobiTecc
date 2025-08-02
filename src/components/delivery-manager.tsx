@@ -89,7 +89,7 @@ export function DeliveryManager() {
       title: 'Sincronização Completa!',
       description: `${pendingDeliveries.length + pendingCollections.length} item(ns) foram sincronizados.`,
       variant: 'default',
-      className: 'bg-accent text-accent-foreground',
+      className: 'bg-green-500 text-white',
     });
   }, [isOnline, deliveries, collections, setDeliveries, setCollections, toast, isSyncing]);
 
@@ -110,7 +110,7 @@ export function DeliveryManager() {
 
 
   return (
-    <div className="pb-24 md:pb-0">
+    <div className="pb-24 md:pb-8">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'deliveries' | 'collections' | 'visits' | 'shipments')} className="space-y-8">
         <div className="hidden md:flex justify-center">
             <TabsList className="hidden">
@@ -125,7 +125,7 @@ export function DeliveryManager() {
             <DeliveryForm onSubmit={handleAddDelivery} allSchoolNames={allSchoolNames} />
             <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="text-2xl font-bold font-headline">Entregas Recentes</h2>
+                <h2 className="text-2xl font-bold font-headline text-foreground">Entregas Recentes</h2>
             </div>
             <DeliveryList deliveries={deliveries} />
             </div>
@@ -135,30 +135,30 @@ export function DeliveryManager() {
             <CollectionForm onSubmit={handleAddCollection} allSchoolNames={allSchoolNames} />
             <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="text-2xl font-bold font-headline">Recolhimentos Recentes</h2>
+                <h2 className="text-2xl font-bold font-headline text-foreground">Recolhimentos Recentes</h2>
             </div>
             <CollectionList collections={collections} />
             </div>
         </TabsContent>
         
         <TabsContent value="visits" className="space-y-8 mt-0">
-          <Card>
+          <Card className="shadow-lg rounded-xl">
             <CardHeader>
               <CardTitle>Visitas</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>Gerencie suas visitas aqui.</p>
+              <p className="text-muted-foreground">Funcionalidade em desenvolvimento.</p>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="shipments" className="space-y-8 mt-0">
-          <Card>
+          <Card className="shadow-lg rounded-xl">
             <CardHeader>
               <CardTitle>Envios</CardTitle>
             </CardHeader>
             <CardContent>
-              <p>Gerencie seus envios aqui.</p>
+              <p className="text-muted-foreground">Funcionalidade em desenvolvimento.</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -167,8 +167,8 @@ export function DeliveryManager() {
 
 
        {isOnline && pendingCount > 0 && (
-          <div className="fixed bottom-20 md:bottom-4 right-4 z-50">
-            <Button onClick={syncPendingData} disabled={isSyncing} size="lg" className="shadow-lg">
+          <div className="fixed bottom-24 md:bottom-6 right-6 z-50">
+            <Button onClick={syncPendingData} disabled={isSyncing} size="lg" className="rounded-full shadow-2xl">
               <CloudUpload className="mr-2 h-5 w-5" />
               {isSyncing ? 'Sincronizando...' : `Sincronizar ${pendingCount} item(ns)`}
             </Button>
@@ -182,41 +182,41 @@ export function DeliveryManager() {
                     onClick={() => setActiveTab('deliveries')}
                     className={cn(
                         "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
-                        activeTab === 'deliveries' ? 'text-primary' : 'text-muted-foreground'
+                        activeTab === 'deliveries' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
                     <Truck className="h-6 w-6 mb-1" />
-                    <span>Entregas</span>
+                    <span className={cn('font-semibold', activeTab === 'deliveries' ? 'text-primary' : 'text-muted-foreground')}>Entregas</span>
                 </button>
                 <button
                     onClick={() => setActiveTab('collections')}
                     className={cn(
                         "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
-                        activeTab === 'collections' ? 'text-primary' : 'text-muted-foreground'
+                        activeTab === 'collections' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
                     <PackageOpen className="h-6 w-6 mb-1" />
-                    <span>Recolhimentos</span>
+                    <span className={cn('font-semibold', activeTab === 'collections' ? 'text-primary' : 'text-muted-foreground')}>Recolhimentos</span>
                 </button>
                  <button
                     onClick={() => setActiveTab('visits')}
                     className={cn(
                         "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
-                        activeTab === 'visits' ? 'text-primary' : 'text-muted-foreground'
+                        activeTab === 'visits' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
                     <Users className="h-6 w-6 mb-1" />
-                    <span>Visitas</span>
+                    <span className={cn('font-semibold', activeTab === 'visits' ? 'text-primary' : 'text-muted-foreground')}>Visitas</span>
                 </button>
                  <button
                     onClick={() => setActiveTab('shipments')}
                     className={cn(
                         "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
-                        activeTab === 'shipments' ? 'text-primary' : 'text-muted-foreground'
+                        activeTab === 'shipments' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
                     <Plane className="h-6 w-6 mb-1" />
-                    <span>Envios</span>
+                    <span className={cn('font-semibold', activeTab === 'shipments' ? 'text-primary' : 'text-muted-foreground')}>Envios</span>
                 </button>
             </div>
         </div>

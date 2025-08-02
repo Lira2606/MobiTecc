@@ -141,7 +141,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
   return (
     <Card className="w-full shadow-lg rounded-xl">
       <CardHeader>
-        <CardTitle className="font-headline">Novo Recolhimento</CardTitle>
+        <CardTitle className="text-2xl font-bold">Novo Recolhimento</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -223,9 +223,9 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                     </Alert>
                   )}
                 {photoDataUri ? (
-                  <div className="relative">
+                  <div className="relative group">
                     <Image src={photoDataUri} alt="Foto da coleta" width={400} height={300} className="rounded-md w-full object-cover" />
-                     <Button type="button" variant="destructive" size="icon" onClick={handleClearPhoto} className="absolute top-2 right-2">
+                     <Button type="button" variant="destructive" size="icon" onClick={handleClearPhoto} className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Trash2 />
                     </Button>
                   </div>
@@ -250,7 +250,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                         <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full sm:w-auto">
                           <Upload className="mr-2" /> Selecionar Arquivo
                         </Button>
-                        <Button type="button" onClick={() => setShowCamera(true)} className="w-full sm:w-auto">
+                        <Button type="button" variant="outline" size="icon" onClick={() => setShowCamera(true)} className="w-full sm:w-auto">
                           <Camera />
                         </Button>
                      </div>
@@ -273,7 +273,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto">
+            <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto" size="lg">
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Registrar Recolhimento
             </Button>
