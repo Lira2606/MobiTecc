@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useState, useRef } from 'react';
-import { Loader2, Home, User, Briefcase, Phone, Camera, X } from 'lucide-react';
+import { Loader2, Home, User, Briefcase, Phone, Camera, X, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 
@@ -70,6 +70,13 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
       fileInputRef.current.value = '';
     }
   };
+  
+  const openCamera = () => {
+      toast({
+          title: 'Funcionalidade em desenvolvimento',
+          description: 'O acesso à câmera será implementado em breve.',
+      });
+  }
 
   const handleSubmit = (data: DeliveryFormValues) => {
     setIsSubmitting(true);
@@ -186,14 +193,24 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
                     </button>
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#334155] rounded-lg text-gray-400 hover:bg-[#1e293b] hover:border-teal-500 transition-all"
-                  >
-                    <Camera className="w-8 h-8 mb-2" />
-                    <span className="text-sm font-semibold">Adicionar Foto</span>
-                  </button>
+                  <div className="grid grid-cols-2 gap-4">
+                    <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#334155] rounded-lg text-gray-400 hover:bg-[#1e293b] hover:border-teal-500 transition-all"
+                    >
+                        <Upload className="w-8 h-8 mb-2" />
+                        <span className="text-sm font-semibold">Adicionar Foto</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={openCamera}
+                        className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#334155] rounded-lg text-gray-400 hover:bg-[#1e293b] hover:border-teal-500 transition-all"
+                    >
+                        <Camera className="w-8 h-8 mb-2" />
+                        <span className="text-sm font-semibold">Tirar Foto</span>
+                    </button>
+                  </div>
                 )}
             </div>
 
