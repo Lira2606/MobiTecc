@@ -106,10 +106,6 @@ export function DeliveryManager() {
                 <PackageOpen className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Recolhimentos</span>
             </button>
-             <button onClick={() => { setActiveTab('history'); setShowSuccess(false); }} className={getButtonClass('history')}>
-                <ClipboardList className="w-7 h-7 mb-1" />
-                <span className="text-xs font-medium">Registros</span>
-            </button>
             <button onClick={() => { setActiveTab('visits'); setShowSuccess(false); }} className={getButtonClass('visits')}>
                 <Users className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Visitas</span>
@@ -117,6 +113,10 @@ export function DeliveryManager() {
             <button onClick={() => { setActiveTab('shipments'); setShowSuccess(false); }} className={getButtonClass('shipments')}>
                 <Plane className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Envios</span>
+            </button>
+             <button onClick={() => { setActiveTab('history'); setShowSuccess(false); }} className={getButtonClass('history')}>
+                <ClipboardList className="w-7 h-7 mb-1" />
+                <span className="text-xs font-medium">Registros</span>
             </button>
         </nav>
     </div>
