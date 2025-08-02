@@ -1,6 +1,7 @@
 export interface Delivery {
   id: string;
   schoolName: string;
+  department?: string;
   responsibleParty: string;
   role: string;
   phoneNumber: string;
