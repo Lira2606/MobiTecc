@@ -8,7 +8,7 @@ import { DeliveryForm } from './delivery-form';
 import { DeliveryList } from './delivery-list';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { CloudUpload, Truck, PackageOpen, Plane, Users } from 'lucide-react';
+import { CloudUpload, Truck, PackageOpen, User, Briefcase, Users, Plane } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CollectionForm } from './collection-form';
 import { CollectionList } from './collection-list';
@@ -66,7 +66,6 @@ export function DeliveryManager() {
       description: `Sincronizando ${pendingDeliveries.length + pendingCollections.length} item(ns).`,
     });
 
-    // Simulate network requests
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     setDeliveries(prev => prev.map(d => ({ ...d, synced: true })));
@@ -112,7 +111,7 @@ export function DeliveryManager() {
         <TabsContent value="deliveries" className="space-y-6 mt-0">
             <DeliveryForm onSubmit={handleAddDelivery} allSchoolNames={allSchoolNames} />
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-foreground px-1">Entregas Recentes</h2>
+              <h2 className="text-xl font-semibold text-foreground px-1 tracking-tight">Entregas Recentes</h2>
               <DeliveryList deliveries={deliveries} />
             </div>
         </TabsContent>
@@ -120,13 +119,13 @@ export function DeliveryManager() {
         <TabsContent value="collections" className="space-y-6 mt-0">
             <CollectionForm onSubmit={handleAddCollection} allSchoolNames={allSchoolNames} />
             <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-foreground px-1">Recolhimentos Recentes</h2>
+              <h2 className="text-xl font-semibold text-foreground px-1 tracking-tight">Recolhimentos Recentes</h2>
               <CollectionList collections={collections} />
             </div>
         </TabsContent>
         
         <TabsContent value="visits" className="space-y-6 mt-0">
-          <Card className="shadow-none border-border">
+          <Card>
             <CardHeader>
               <CardTitle>Visitas</CardTitle>
               <CardDescription>Esta funcionalidade está em desenvolvimento.</CardDescription>
@@ -138,7 +137,7 @@ export function DeliveryManager() {
         </TabsContent>
 
         <TabsContent value="shipments" className="space-y-6 mt-0">
-          <Card className="shadow-none border-border">
+          <Card>
             <CardHeader>
               <CardTitle>Envios</CardTitle>
               <CardDescription>Esta funcionalidade está em desenvolvimento.</CardDescription>
@@ -161,47 +160,46 @@ export function DeliveryManager() {
           </div>
         )}
 
-        {/* Mobile Navigation */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t z-50">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t z-50">
             <div className="flex justify-around items-center h-16">
                 <button
                     onClick={() => setActiveTab('deliveries')}
                     className={cn(
-                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors",
+                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors gap-1",
                         activeTab === 'deliveries' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
-                    <Truck className="h-5 w-5 mb-1" />
+                    <Truck className="h-5 w-5" />
                     Entregas
                 </button>
                 <button
                     onClick={() => setActiveTab('collections')}
                     className={cn(
-                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors",
+                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors gap-1",
                         activeTab === 'collections' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
-                    <PackageOpen className="h-5 w-5 mb-1" />
+                    <PackageOpen className="h-5 w-5" />
                      Recolhimentos
                 </button>
                  <button
                     onClick={() => setActiveTab('visits')}
                     className={cn(
-                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors",
+                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors gap-1",
                         activeTab === 'visits' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
-                    <Users className="h-5 w-5 mb-1" />
+                    <Users className="h-5 w-5" />
                      Visitas
                 </button>
                  <button
                     onClick={() => setActiveTab('shipments')}
                     className={cn(
-                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors",
+                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors gap-1",
                         activeTab === 'shipments' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
-                    <Plane className="h-5 w-5 mb-1" />
+                    <Plane className="h-5 w-5" />
                      Envios
                 </button>
             </div>

@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useState, useRef, useEffect } from 'react';
-import { Loader2, Camera, Trash2, Upload } from 'lucide-react';
+import { Loader2, Camera, Trash2, Upload, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
@@ -139,14 +139,14 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
   }
 
   return (
-    <Card className="w-full shadow-none border-border bg-card">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-xl">Novo Recolhimento</CardTitle>
+        <CardTitle className="text-2xl tracking-tight">Novo Recolhimento</CardTitle>
         <CardDescription>Preencha os detalhes para registrar um recolhimento.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="schoolName"
@@ -189,7 +189,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 )}
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1">
               <FormField
                 control={form.control}
                 name="phoneNumber"
@@ -206,7 +206,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
             </div>
 
             <FormItem>
-              <FormLabel>Foto</FormLabel>
+              <FormLabel>Foto do Recolhimento</FormLabel>
                <input 
                   type="file" 
                   accept="image/*" 
@@ -224,8 +224,8 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                     </Alert>
                   )}
                 {photoDataUri ? (
-                  <div className="relative group">
-                    <Image src={photoDataUri} alt="Foto da coleta" width={400} height={300} className="rounded-md w-full object-cover" />
+                  <div className="relative group aspect-video">
+                    <Image src={photoDataUri} alt="Foto da coleta" layout="fill" className="rounded-md object-cover" />
                      <Button type="button" variant="destructive" size="icon" onClick={handleClearPhoto} className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Trash2 />
                     </Button>
@@ -247,13 +247,20 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                       </div>
                     </>
                   ) : (
-                     <div className="flex flex-wrap gap-2">
-                        <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full sm:w-auto">
-                          <Upload className="mr-2" /> Selecionar Arquivo
-                        </Button>
-                        <Button type="button" variant="outline" onClick={() => setShowCamera(true)} className="w-full sm:w-auto">
-                          <Camera />
-                        </Button>
+                     <div 
+                      className="relative flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-muted-foreground/30 rounded-lg cursor-pointer bg-card hover:bg-muted transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                     >
+                       <div className="flex flex-col items-center justify-center pt-5 pb-6 text-center">
+                         <ImageIcon className="w-10 h-10 mb-4 text-muted-foreground" />
+                         <p className="mb-2 text-sm text-muted-foreground">
+                           <span className="font-semibold text-primary">Clique para enviar</span> ou arraste e solte
+                         </p>
+                         <p className="text-xs text-muted-foreground">PNG, JPG (MAX. 800x400px)</p>
+                       </div>
+                       <Button type="button" variant="outline" onClick={(e) => { e.stopPropagation(); setShowCamera(true);}} className="absolute bottom-4 right-4 z-10">
+                           <Camera className="h-4 w-4" />
+                       </Button>
                      </div>
                   )}
                   </>
@@ -268,13 +275,13 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 <FormItem>
                   <FormLabel>Observações</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Alguma observação adicional?" {...field} />
+                    <Textarea placeholder="Alguma observação adicional?" {...field} rows={4} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto">
+            <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto text-lg py-6">
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Registrar Recolhimento
             </Button>
