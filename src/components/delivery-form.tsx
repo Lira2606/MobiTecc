@@ -11,9 +11,10 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { useState } from 'react';
-import { Loader2, Home, User, Briefcase, Phone } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Loader2, Home, User, Briefcase, Phone, Camera, X } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 const formSchema = z.object({
   schoolName: z.string().min(2, { message: 'O nome da escola é obrigatório.' }),
@@ -33,6 +34,8 @@ interface DeliveryFormProps {
 
 export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const form = useForm<DeliveryFormValues>({
@@ -46,6 +49,27 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
       photoDataUri: '',
     },
   });
+
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUri = reader.result as string;
+        setPhotoPreview(dataUri);
+        form.setValue('photoDataUri', dataUri);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearPhoto = () => {
+    setPhotoPreview(null);
+    form.setValue('photoDataUri', '');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const handleSubmit = (data: DeliveryFormValues) => {
     setIsSubmitting(true);
@@ -133,7 +157,47 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
               )}
             />
 
-          <div className="pt-4 fade-in-up" style={{ animationDelay: '700ms' }}>
+            <div className="fade-in-up" style={{ animationDelay: '700ms' }}>
+                <FormControl>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    ref={fileInputRef}
+                    onChange={handlePhotoChange}
+                  />
+                </FormControl>
+                {photoPreview ? (
+                  <div className="relative group">
+                    <Image
+                      src={photoPreview}
+                      alt="Pré-visualização"
+                      width={400}
+                      height={200}
+                      className="w-full h-auto rounded-lg object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={clearPhoto}
+                      className="absolute top-2 right-2 bg-black/50 rounded-full p-1 text-white hover:bg-black/75 transition-all opacity-0 group-hover:opacity-100"
+                      aria-label="Remover foto"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#334155] rounded-lg text-gray-400 hover:bg-[#1e293b] hover:border-teal-500 transition-all"
+                  >
+                    <Camera className="w-8 h-8 mb-2" />
+                    <span className="text-sm font-semibold">Adicionar Foto</span>
+                  </button>
+                )}
+            </div>
+
+          <div className="pt-4 fade-in-up" style={{ animationDelay: '800ms' }}>
             <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white font-bold py-3 h-auto px-4 rounded-lg shadow-lg hover:shadow-teal-500/50 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center text-base">
               {isSubmitting ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
