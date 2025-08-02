@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { Inter } from 'next/font/google';
+import { SplashScreen } from '@/components/splash-screen';
 
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -28,6 +29,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const screenRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
+
 
   useEffect(() => {
     const screen = screenRef.current;
@@ -46,7 +56,7 @@ export default function RootLayout({
     return () => {
       screen.removeEventListener('mousemove', handleMouseMove);
     };
-  }, []);
+  }, [loading]);
 
   return (
     <html lang="pt-BR" suppressHydrationWarning>
@@ -57,7 +67,7 @@ export default function RootLayout({
             ref={screenRef}
             className="mobile-screen w-full rounded-3xl overflow-hidden relative flex flex-col"
           >
-            {children}
+            {loading ? <SplashScreen /> : children}
           </div>
         </div>
         <Toaster />
