@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 export function Header() {
   const isOnline = useOnlineStatus();
   return (
-    <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-40">
+    <header className="border-b border-white/10 bg-background/95 backdrop-blur-sm sticky top-0 z-40">
       <div className="container mx-auto flex h-16 justify-between items-center px-4">
         <h1 className="text-xl font-bold text-foreground">
           MobiTec

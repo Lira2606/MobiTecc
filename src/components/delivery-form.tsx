@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useState, useRef, useEffect } from 'react';
 import { Loader2, Camera, Trash2, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -135,9 +135,10 @@ export function DeliveryForm({ onSubmit }: DeliveryFormProps) {
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full border-white/10 bg-card">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Nova Entrega</CardTitle>
+        <CardDescription>Preencha os detalhes abaixo para registrar uma nova entrega.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -233,7 +234,7 @@ export function DeliveryForm({ onSubmit }: DeliveryFormProps) {
                           <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
                       </div>
                       <div className="flex gap-2">
-                        <Button type="button" onClick={handleCapture} className="w-full md:w-auto">
+                        <Button type="button" onClick={handleCapture} className="w-full md:w-auto bg-primary text-primary-foreground hover:bg-primary/90">
                           <Camera className="mr-2" /> Capturar Foto
                         </Button>
                          <Button type="button" variant="secondary" onClick={() => setShowCamera(false)} className="w-full md:w-auto">

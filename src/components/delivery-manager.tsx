@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CollectionForm } from './collection-form';
 import { CollectionList } from './collection-list';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 
 
 export function DeliveryManager() {
@@ -145,9 +145,10 @@ export function DeliveryManager() {
           <Card>
             <CardHeader>
               <CardTitle>Visitas</CardTitle>
+              <CardDescription>Esta funcionalidade está em desenvolvimento.</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">Funcionalidade em desenvolvimento.</p>
+              <p className="text-muted-foreground">Volte em breve para conferir as novidades.</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -156,9 +157,10 @@ export function DeliveryManager() {
           <Card>
             <CardHeader>
               <CardTitle>Envios</CardTitle>
+              <CardDescription>Esta funcionalidade está em desenvolvimento.</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">Funcionalidade em desenvolvimento.</p>
+              <p className="text-muted-foreground">Volte em breve para conferir as novidades.</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -168,7 +170,7 @@ export function DeliveryManager() {
 
        {isOnline && pendingCount > 0 && (
           <div className="fixed bottom-24 md:bottom-6 right-6 z-50">
-            <Button onClick={syncPendingData} disabled={isSyncing} size="lg" className="rounded-full shadow-lg">
+            <Button onClick={syncPendingData} disabled={isSyncing} size="lg" className="rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90">
               <CloudUpload className="mr-2 h-5 w-5" />
               {isSyncing ? 'Sincronizando...' : `Sincronizar ${pendingCount} item(ns)`}
             </Button>
@@ -176,7 +178,7 @@ export function DeliveryManager() {
         )}
 
         {/* Mobile Navigation */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t shadow-lg z-50">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t border-white/10 shadow-lg z-50">
             <div className="flex justify-around items-center h-16">
                 <button
                     onClick={() => setActiveTab('deliveries')}

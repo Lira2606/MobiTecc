@@ -1,7 +1,7 @@
 'use client';
 
 import type { Delivery } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Badge } from './ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
 import { CheckCircle2, Clock, Phone, User, MessageSquare, Briefcase, Camera } from 'lucide-react';
@@ -17,12 +17,13 @@ interface DeliveryListProps {
 export function DeliveryList({ deliveries }: DeliveryListProps) {
   if (deliveries.length === 0) {
     return (
-      <Card>
+      <Card className="border-white/10">
         <CardHeader>
           <CardTitle>Nenhuma entrega registrada</CardTitle>
+          <CardDescription>Comece registrando uma nova entrega no formulário acima.</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Comece registrando uma nova entrega no formulário acima.</p>
+          <p className="text-muted-foreground">Ainda não há registros para exibir.</p>
         </CardContent>
       </Card>
     );
@@ -33,11 +34,11 @@ export function DeliveryList({ deliveries }: DeliveryListProps) {
       <Accordion type="single" collapsible className="w-full space-y-4">
         {deliveries.map(delivery => (
           <AccordionItem value={delivery.id} key={delivery.id} className="border-none">
-            <Card className="shadow-none border-none rounded-lg overflow-hidden">
+            <Card className="shadow-none border border-white/10 rounded-lg overflow-hidden bg-card">
               <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-secondary/50 rounded-t-lg">
                 <div className="flex justify-between items-center w-full">
                   <div className="text-left">
-                    <p className="font-bold text-lg text-primary">{delivery.schoolName}</p>
+                    <p className="font-bold text-lg text-foreground">{delivery.schoolName}</p>
                     <p className="text-sm text-muted-foreground">
                       {format(parseISO(delivery.createdAt), "dd 'de' MMMM, yyyy 'às' HH:mm", { locale: ptBR })}
                     </p>
@@ -46,7 +47,7 @@ export function DeliveryList({ deliveries }: DeliveryListProps) {
                     variant={delivery.synced ? 'default' : 'secondary'}
                     className={cn(
                       'transition-colors',
-                      delivery.synced ? 'bg-green-100 text-green-800 border-green-200' : 'bg-amber-100 text-amber-800 border-amber-200'
+                      delivery.synced ? 'bg-green-900/50 text-green-300 border-green-700' : 'bg-amber-900/50 text-amber-300 border-amber-700'
                     )}
                   >
                     {delivery.synced ? (
