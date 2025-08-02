@@ -17,70 +17,60 @@ interface DeliveryListProps {
 export function DeliveryList({ deliveries }: DeliveryListProps) {
   if (deliveries.length === 0) {
     return (
-      <Card className="border-border/50 shadow-sm">
+      <Card className="shadow-none border-border">
         <CardHeader>
-          <CardTitle>Nenhuma entrega registrada</CardTitle>
-          <CardDescription>Comece registrando uma nova entrega no formulário acima.</CardDescription>
+          <CardTitle>Nenhuma entrega</CardTitle>
+          <CardDescription>Ainda não há entregas para exibir.</CardDescription>
         </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">Ainda não há registros para exibir.</p>
-        </CardContent>
       </Card>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <Accordion type="single" collapsible className="w-full space-y-4">
+    <div className="space-y-2">
+      <Accordion type="single" collapsible className="w-full space-y-2">
         {deliveries.map(delivery => (
           <AccordionItem value={delivery.id} key={delivery.id} className="border-none">
-            <Card className="shadow-lg border-border/50 rounded-lg overflow-hidden bg-card">
-              <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-secondary/50 rounded-t-lg transition-colors">
+            <Card className="shadow-none border-border rounded-lg overflow-hidden bg-card">
+              <AccordionTrigger className="p-4 hover:no-underline data-[state=open]:bg-secondary/50 rounded-lg transition-colors">
                 <div className="flex justify-between items-center w-full">
                   <div className="text-left">
-                    <p className="font-bold text-lg text-foreground">{delivery.schoolName}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {format(parseISO(delivery.createdAt), "dd 'de' MMMM, yyyy 'às' HH:mm", { locale: ptBR })}
+                    <p className="font-semibold text-sm text-foreground">{delivery.schoolName}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {format(parseISO(delivery.createdAt), "dd/MM/yy 'às' HH:mm", { locale: ptBR })}
                     </p>
                   </div>
                   <Badge
-                    variant={delivery.synced ? 'default' : 'secondary'}
+                    variant={delivery.synced ? 'outline' : 'secondary'}
                     className={cn(
-                      'transition-colors',
-                      delivery.synced ? 'bg-green-900/50 text-green-300 border-green-700' : 'bg-amber-900/50 text-amber-300 border-amber-700'
+                      'transition-colors text-xs',
+                      delivery.synced ? 'text-green-600 border-green-600/50' : 'text-amber-600 border-amber-600/50'
                     )}
                   >
                     {delivery.synced ? (
-                      <CheckCircle2 className="mr-2 h-4 w-4" />
+                      <CheckCircle2 className="mr-1 h-3 w-3" />
                     ) : (
-                      <Clock className="mr-2 h-4 w-4" />
+                      <Clock className="mr-1 h-3 w-3" />
                     )}
-                    {delivery.synced ? 'Sincronizado' : 'Pendente'}
+                    {delivery.synced ? 'Sinc' : 'Pendente'}
                   </Badge>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="p-6 pt-0 bg-card rounded-b-lg">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div className="space-y-4 text-sm">
+              <AccordionContent className="p-4 pt-0 bg-card rounded-b-lg">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-3 text-sm">
                     <div className="flex items-center gap-3">
                       <User className="h-4 w-4 text-muted-foreground" />
-                      <span>Responsável: <strong>{delivery.responsibleParty}</strong></span>
+                      <span><strong>{delivery.responsibleParty}</strong> ({delivery.role})</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <Briefcase className="h-4 w-4 text-muted-foreground" />
-                      <span>Função: <strong>{delivery.role}</strong></span>
-                    </div>
-                    <div className="flex items-center gap-3">
+                     <div className="flex items-center gap-3">
                       <Phone className="h-4 w-4 text-muted-foreground" />
-                      <span>Telefone: <strong>{delivery.phoneNumber}</strong></span>
+                      <span>{delivery.phoneNumber}</span>
                     </div>
                     {delivery.observations && (
-                       <div className="flex items-start gap-3">
-                        <MessageSquare className="h-4 w-4 text-muted-foreground mt-1" />
-                         <div>
-                          <p className="font-semibold">Observações:</p>
-                          <p className="text-muted-foreground">{delivery.observations}</p>
-                        </div>
+                       <div className="flex items-start gap-3 pt-2">
+                        <MessageSquare className="h-4 w-4 text-muted-foreground mt-0.5" />
+                         <p className="text-muted-foreground">{delivery.observations}</p>
                       </div>
                     )}
                   </div>
@@ -91,7 +81,7 @@ export function DeliveryList({ deliveries }: DeliveryListProps) {
                         </div>
                       ) : (
                         <div className="flex items-center justify-center h-full bg-muted rounded-md aspect-video">
-                          <Camera className="h-10 w-10 text-muted-foreground" />
+                          <Camera className="h-8 w-8 text-muted-foreground" />
                         </div>
                       )}
                   </div>

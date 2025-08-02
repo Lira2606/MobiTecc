@@ -139,14 +139,14 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
   }
 
   return (
-    <Card className="w-full border-border/50 shadow-sm bg-card">
+    <Card className="w-full shadow-none border-border bg-card">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold">Novo Recolhimento</CardTitle>
-        <CardDescription>Preencha os detalhes abaixo para registrar um novo recolhimento.</CardDescription>
+        <CardTitle className="text-xl">Novo Recolhimento</CardTitle>
+        <CardDescription>Preencha os detalhes para registrar um recolhimento.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="schoolName"
@@ -161,7 +161,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
               )}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="responsibleParty"
@@ -182,14 +182,14 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                   <FormItem>
                     <FormLabel>Função</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Professor(a), Coordenador(a)" {...field} />
+                      <Input placeholder="Ex: Professor(a)" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="phoneNumber"
@@ -238,8 +238,8 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                           <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
                       </div>
                       <div className="flex gap-2">
-                        <Button type="button" onClick={handleCapture} className="w-full md:w-auto bg-primary text-primary-foreground hover:bg-primary/90">
-                          <Camera className="mr-2" /> Capturar Foto
+                        <Button type="button" onClick={handleCapture} className="w-full md:w-auto">
+                          <Camera className="mr-2" /> Capturar
                         </Button>
                         <Button type="button" variant="secondary" onClick={() => setShowCamera(false)} className="w-full md:w-auto">
                            Cancelar
@@ -251,7 +251,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                         <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full sm:w-auto">
                           <Upload className="mr-2" /> Selecionar Arquivo
                         </Button>
-                        <Button type="button" variant="outline" size="icon" onClick={() => setShowCamera(true)} className="w-full sm:w-auto">
+                        <Button type="button" variant="outline" onClick={() => setShowCamera(true)} className="w-full sm:w-auto">
                           <Camera />
                         </Button>
                      </div>
@@ -274,7 +274,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto" size="lg">
+            <Button type="submit" disabled={isSubmitting} className="w-full md:w-auto">
               {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Registrar Recolhimento
             </Button>

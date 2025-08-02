@@ -34,7 +34,7 @@ export function DeliveryManager() {
     setDeliveries(prev => [newDelivery, ...prev]);
     toast({
       title: 'Entrega Registrada',
-      description: 'Sua entrega foi salva localmente e será sincronizada em breve.',
+      description: 'A entrega foi salva localmente.',
     });
   };
 
@@ -48,7 +48,7 @@ export function DeliveryManager() {
     setCollections(prev => [newCollection, ...prev]);
     toast({
       title: 'Recolhimento Registrado',
-      description: 'Seu recolhimento foi salvo localmente e será sincronizado em breve.',
+      description: 'O recolhimento foi salvo localmente.',
     });
   };
 
@@ -63,33 +63,21 @@ export function DeliveryManager() {
     setIsSyncing(true);
     toast({
       title: 'Sincronizando...',
-      description: `Sincronizando ${pendingDeliveries.length} entrega(s) e ${pendingCollections.length} recolhimento(s).`,
+      description: `Sincronizando ${pendingDeliveries.length + pendingCollections.length} item(ns).`,
     });
 
-    // Simulate network requests for deliveries
-    if (pendingDeliveries.length > 0) {
-      await new Promise(resolve => setTimeout(resolve, 400 * pendingDeliveries.length));
-      console.log(`Simulating sync for ${pendingDeliveries.length} deliveries`);
-      setDeliveries(prev =>
-        prev.map(d => (pendingDeliveries.find(pd => pd.id === d.id) ? { ...d, synced: true } : d))
-      );
-    }
+    // Simulate network requests
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
-    // Simulate network requests for collections
-    if (pendingCollections.length > 0) {
-      await new Promise(resolve => setTimeout(resolve, 400 * pendingCollections.length));
-      console.log(`Simulating sync for ${pendingCollections.length} collections`);
-      setCollections(prev =>
-          prev.map(c => (pendingCollections.find(pc => pc.id === c.id) ? { ...c, synced: true } : c))
-      );
-    }
+    setDeliveries(prev => prev.map(d => ({ ...d, synced: true })));
+    setCollections(prev => prev.map(c => ({ ...c, synced: true })));
 
     setIsSyncing(false);
     toast({
       title: 'Sincronização Completa!',
-      description: `${pendingDeliveries.length + pendingCollections.length} item(ns) foram sincronizados.`,
+      description: 'Todos os itens foram sincronizados.',
       variant: 'default',
-      className: 'bg-green-600 border-green-600 text-white',
+      className: 'bg-green-100 border-green-300 text-green-800 dark:bg-green-900/50 dark:text-green-300 dark:border-green-700',
     });
   }, [isOnline, deliveries, collections, setDeliveries, setCollections, toast, isSyncing]);
 
@@ -111,7 +99,7 @@ export function DeliveryManager() {
 
   return (
     <div className="pb-24 md:pb-8">
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'deliveries' | 'collections' | 'visits' | 'shipments')} className="space-y-8">
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'deliveries' | 'collections' | 'visits' | 'shipments')} className="space-y-6">
         <div className="hidden md:flex justify-center">
             <TabsList className="hidden">
             <TabsTrigger value="deliveries">Entregas</TabsTrigger>
@@ -121,28 +109,24 @@ export function DeliveryManager() {
             </TabsList>
         </div>
 
-        <TabsContent value="deliveries" className="space-y-8 mt-0">
+        <TabsContent value="deliveries" className="space-y-6 mt-0">
             <DeliveryForm onSubmit={handleAddDelivery} allSchoolNames={allSchoolNames} />
-            <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="text-2xl font-bold text-foreground">Entregas Recentes</h2>
-            </div>
-            <DeliveryList deliveries={deliveries} />
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-foreground px-1">Entregas Recentes</h2>
+              <DeliveryList deliveries={deliveries} />
             </div>
         </TabsContent>
 
-        <TabsContent value="collections" className="space-y-8 mt-0">
+        <TabsContent value="collections" className="space-y-6 mt-0">
             <CollectionForm onSubmit={handleAddCollection} allSchoolNames={allSchoolNames} />
-            <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="text-2xl font-bold text-foreground">Recolhimentos Recentes</h2>
-            </div>
-            <CollectionList collections={collections} />
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-foreground px-1">Recolhimentos Recentes</h2>
+              <CollectionList collections={collections} />
             </div>
         </TabsContent>
         
-        <TabsContent value="visits" className="space-y-8 mt-0">
-          <Card className="border-border/50 shadow-sm">
+        <TabsContent value="visits" className="space-y-6 mt-0">
+          <Card className="shadow-none border-border">
             <CardHeader>
               <CardTitle>Visitas</CardTitle>
               <CardDescription>Esta funcionalidade está em desenvolvimento.</CardDescription>
@@ -153,8 +137,8 @@ export function DeliveryManager() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="shipments" className="space-y-8 mt-0">
-          <Card className="border-border/50 shadow-sm">
+        <TabsContent value="shipments" className="space-y-6 mt-0">
+          <Card className="shadow-none border-border">
             <CardHeader>
               <CardTitle>Envios</CardTitle>
               <CardDescription>Esta funcionalidade está em desenvolvimento.</CardDescription>
@@ -170,55 +154,55 @@ export function DeliveryManager() {
 
        {isOnline && pendingCount > 0 && (
           <div className="fixed bottom-24 md:bottom-6 right-6 z-50">
-            <Button onClick={syncPendingData} disabled={isSyncing} size="lg" className="rounded-full shadow-lg bg-primary text-primary-foreground hover:bg-primary/90">
-              <CloudUpload className="mr-2 h-5 w-5" />
-              {isSyncing ? 'Sincronizando...' : `Sincronizar ${pendingCount} item(ns)`}
+            <Button onClick={syncPendingData} disabled={isSyncing} className="rounded-full shadow-lg">
+              <CloudUpload className="mr-2 h-4 w-4" />
+              {isSyncing ? 'Sincronizando...' : `Sincronizar ${pendingCount}`}
             </Button>
           </div>
         )}
 
         {/* Mobile Navigation */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t border-border/50 shadow-lg z-50">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-t z-50">
             <div className="flex justify-around items-center h-16">
                 <button
                     onClick={() => setActiveTab('deliveries')}
                     className={cn(
-                        "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
+                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors",
                         activeTab === 'deliveries' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
-                    <Truck className="h-6 w-6 mb-1" />
-                    <span className={cn('text-xs', activeTab === 'deliveries' ? 'font-semibold' : 'font-normal')}>Entregas</span>
+                    <Truck className="h-5 w-5 mb-1" />
+                    Entregas
                 </button>
                 <button
                     onClick={() => setActiveTab('collections')}
                     className={cn(
-                        "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
+                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors",
                         activeTab === 'collections' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
-                    <PackageOpen className="h-6 w-6 mb-1" />
-                     <span className={cn('text-xs', activeTab === 'collections' ? 'font-semibold' : 'font-normal')}>Recolhimentos</span>
+                    <PackageOpen className="h-5 w-5 mb-1" />
+                     Recolhimentos
                 </button>
                  <button
                     onClick={() => setActiveTab('visits')}
                     className={cn(
-                        "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
+                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors",
                         activeTab === 'visits' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
-                    <Users className="h-6 w-6 mb-1" />
-                     <span className={cn('text-xs', activeTab === 'visits' ? 'font-semibold' : 'font-normal')}>Visitas</span>
+                    <Users className="h-5 w-5 mb-1" />
+                     Visitas
                 </button>
                  <button
                     onClick={() => setActiveTab('shipments')}
                     className={cn(
-                        "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
+                        "flex flex-col items-center justify-center w-full h-full text-xs font-medium transition-colors",
                         activeTab === 'shipments' ? 'text-primary' : 'text-muted-foreground hover:text-primary'
                     )}
                 >
-                    <Plane className="h-6 w-6 mb-1" />
-                     <span className={cn('text-xs', activeTab === 'shipments' ? 'font-semibold' : 'font-normal')}>Envios</span>
+                    <Plane className="h-5 w-5 mb-1" />
+                     Envios
                 </button>
             </div>
         </div>
