@@ -89,7 +89,7 @@ export function DeliveryManager() {
       title: 'Sincronização Completa!',
       description: `${pendingDeliveries.length + pendingCollections.length} item(ns) foram sincronizados.`,
       variant: 'default',
-      className: 'bg-green-500 text-white',
+      className: 'bg-green-600 border-green-600 text-white',
     });
   }, [isOnline, deliveries, collections, setDeliveries, setCollections, toast, isSyncing]);
 
@@ -142,7 +142,7 @@ export function DeliveryManager() {
         </TabsContent>
         
         <TabsContent value="visits" className="space-y-8 mt-0">
-          <Card>
+          <Card className="border-border/50 shadow-sm">
             <CardHeader>
               <CardTitle>Visitas</CardTitle>
               <CardDescription>Esta funcionalidade está em desenvolvimento.</CardDescription>
@@ -154,7 +154,7 @@ export function DeliveryManager() {
         </TabsContent>
 
         <TabsContent value="shipments" className="space-y-8 mt-0">
-          <Card>
+          <Card className="border-border/50 shadow-sm">
             <CardHeader>
               <CardTitle>Envios</CardTitle>
               <CardDescription>Esta funcionalidade está em desenvolvimento.</CardDescription>
@@ -178,7 +178,7 @@ export function DeliveryManager() {
         )}
 
         {/* Mobile Navigation */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t border-white/10 shadow-lg z-50">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t border-border/50 shadow-lg z-50">
             <div className="flex justify-around items-center h-16">
                 <button
                     onClick={() => setActiveTab('deliveries')}

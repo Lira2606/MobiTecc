@@ -139,7 +139,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
   }
 
   return (
-    <Card className="w-full border-white/10 bg-card">
+    <Card className="w-full border-border/50 shadow-sm bg-card">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Novo Recolhimento</CardTitle>
         <CardDescription>Preencha os detalhes abaixo para registrar um novo recolhimento.</CardDescription>

@@ -135,7 +135,7 @@ export function DeliveryForm({ onSubmit }: DeliveryFormProps) {
   }
 
   return (
-    <Card className="w-full border-white/10 bg-card">
+    <Card className="w-full border-border/50 shadow-sm bg-card">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Nova Entrega</CardTitle>
         <CardDescription>Preencha os detalhes abaixo para registrar uma nova entrega.</CardDescription>

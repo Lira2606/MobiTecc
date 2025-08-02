@@ -18,7 +18,7 @@ interface CollectionListProps {
 export function CollectionList({ collections }: CollectionListProps) {
   if (collections.length === 0) {
     return (
-      <Card className="border-white/10">
+      <Card className="border-border/50 shadow-sm">
         <CardHeader>
           <CardTitle>Nenhum recolhimento registrado</CardTitle>
           <CardDescription>Comece registrando um novo recolhimento no formulário acima.</CardDescription>
@@ -35,8 +35,8 @@ export function CollectionList({ collections }: CollectionListProps) {
       <Accordion type="single" collapsible className="w-full space-y-4">
         {collections.map(collection => (
           <AccordionItem value={collection.id} key={collection.id} className="border-none">
-            <Card className="shadow-none border border-white/10 rounded-lg overflow-hidden bg-card">
-              <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-secondary/50 rounded-t-lg">
+            <Card className="shadow-lg border-border/50 rounded-lg overflow-hidden bg-card">
+              <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-secondary/50 rounded-t-lg transition-colors">
                 <div className="flex justify-between items-center w-full">
                   <div className="text-left">
                     <p className="font-bold text-lg text-foreground">{collection.schoolName}</p>

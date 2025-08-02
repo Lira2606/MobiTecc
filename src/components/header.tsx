@@ -7,12 +7,12 @@ import { Badge } from '@/components/ui/badge';
 export function Header() {
   const isOnline = useOnlineStatus();
   return (
-    <header className="border-b border-white/10 bg-background/95 backdrop-blur-sm sticky top-0 z-40">
+    <header className="border-b border-border/50 bg-background/95 backdrop-blur-sm sticky top-0 z-40">
       <div className="container mx-auto flex h-16 justify-between items-center px-4">
         <h1 className="text-xl font-bold text-foreground">
           MobiTec
         </h1>
-        <Badge variant={isOnline ? 'outline' : 'destructive'} className="transition-all text-xs font-mono">
+        <Badge variant={isOnline ? 'outline' : 'destructive'} className="transition-all text-xs font-mono border-border/80">
           {isOnline ? (
             <Wifi className="mr-2 h-3 w-3 text-green-500" />
           ) : (
