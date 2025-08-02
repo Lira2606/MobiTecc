@@ -125,7 +125,7 @@ export function DeliveryManager() {
             <DeliveryForm onSubmit={handleAddDelivery} allSchoolNames={allSchoolNames} />
             <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="text-2xl font-bold font-headline text-foreground">Entregas Recentes</h2>
+                <h2 className="text-2xl font-bold text-foreground">Entregas Recentes</h2>
             </div>
             <DeliveryList deliveries={deliveries} />
             </div>
@@ -135,14 +135,14 @@ export function DeliveryManager() {
             <CollectionForm onSubmit={handleAddCollection} allSchoolNames={allSchoolNames} />
             <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <h2 className="text-2xl font-bold font-headline text-foreground">Recolhimentos Recentes</h2>
+                <h2 className="text-2xl font-bold text-foreground">Recolhimentos Recentes</h2>
             </div>
             <CollectionList collections={collections} />
             </div>
         </TabsContent>
         
         <TabsContent value="visits" className="space-y-8 mt-0">
-          <Card className="shadow-lg rounded-xl">
+          <Card>
             <CardHeader>
               <CardTitle>Visitas</CardTitle>
             </CardHeader>
@@ -153,7 +153,7 @@ export function DeliveryManager() {
         </TabsContent>
 
         <TabsContent value="shipments" className="space-y-8 mt-0">
-          <Card className="shadow-lg rounded-xl">
+          <Card>
             <CardHeader>
               <CardTitle>Envios</CardTitle>
             </CardHeader>
@@ -168,7 +168,7 @@ export function DeliveryManager() {
 
        {isOnline && pendingCount > 0 && (
           <div className="fixed bottom-24 md:bottom-6 right-6 z-50">
-            <Button onClick={syncPendingData} disabled={isSyncing} size="lg" className="rounded-full shadow-2xl">
+            <Button onClick={syncPendingData} disabled={isSyncing} size="lg" className="rounded-full shadow-lg">
               <CloudUpload className="mr-2 h-5 w-5" />
               {isSyncing ? 'Sincronizando...' : `Sincronizar ${pendingCount} item(ns)`}
             </Button>
@@ -176,7 +176,7 @@ export function DeliveryManager() {
         )}
 
         {/* Mobile Navigation */}
-        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg z-50">
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-sm border-t shadow-lg z-50">
             <div className="flex justify-around items-center h-16">
                 <button
                     onClick={() => setActiveTab('deliveries')}
@@ -186,7 +186,7 @@ export function DeliveryManager() {
                     )}
                 >
                     <Truck className="h-6 w-6 mb-1" />
-                    <span className={cn('font-semibold', activeTab === 'deliveries' ? 'text-primary' : 'text-muted-foreground')}>Entregas</span>
+                    <span className={cn('text-xs', activeTab === 'deliveries' ? 'font-semibold' : 'font-normal')}>Entregas</span>
                 </button>
                 <button
                     onClick={() => setActiveTab('collections')}
@@ -196,7 +196,7 @@ export function DeliveryManager() {
                     )}
                 >
                     <PackageOpen className="h-6 w-6 mb-1" />
-                    <span className={cn('font-semibold', activeTab === 'collections' ? 'text-primary' : 'text-muted-foreground')}>Recolhimentos</span>
+                     <span className={cn('text-xs', activeTab === 'collections' ? 'font-semibold' : 'font-normal')}>Recolhimentos</span>
                 </button>
                  <button
                     onClick={() => setActiveTab('visits')}
@@ -206,7 +206,7 @@ export function DeliveryManager() {
                     )}
                 >
                     <Users className="h-6 w-6 mb-1" />
-                    <span className={cn('font-semibold', activeTab === 'visits' ? 'text-primary' : 'text-muted-foreground')}>Visitas</span>
+                     <span className={cn('text-xs', activeTab === 'visits' ? 'font-semibold' : 'font-normal')}>Visitas</span>
                 </button>
                  <button
                     onClick={() => setActiveTab('shipments')}
@@ -216,7 +216,7 @@ export function DeliveryManager() {
                     )}
                 >
                     <Plane className="h-6 w-6 mb-1" />
-                    <span className={cn('font-semibold', activeTab === 'shipments' ? 'text-primary' : 'text-muted-foreground')}>Envios</span>
+                     <span className={cn('text-xs', activeTab === 'shipments' ? 'font-semibold' : 'font-normal')}>Envios</span>
                 </button>
             </div>
         </div>

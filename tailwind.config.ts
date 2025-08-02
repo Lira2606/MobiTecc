@@ -10,16 +10,14 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: "1rem",
       screens: {
-        "2xl": "1400px",
+        "2xl": "1280px",
       },
     },
     extend: {
       fontFamily: {
-        body: ['PT Sans', 'sans-serif'],
-        headline: ['PT Sans', 'sans-serif'],
-        code: ['monospace'],
+        sans: ['var(--font-sans)', 'sans-serif'],
       },
       colors: {
         background: 'hsl(var(--background))',

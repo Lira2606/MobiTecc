@@ -18,7 +18,7 @@ interface CollectionListProps {
 export function CollectionList({ collections }: CollectionListProps) {
   if (collections.length === 0) {
     return (
-      <Card className="text-center shadow-lg rounded-xl">
+      <Card>
         <CardHeader>
           <CardTitle>Nenhum recolhimento registrado</CardTitle>
         </CardHeader>
@@ -33,9 +33,9 @@ export function CollectionList({ collections }: CollectionListProps) {
     <div className="space-y-4">
       <Accordion type="single" collapsible className="w-full space-y-4">
         {collections.map(collection => (
-          <AccordionItem value={collection.id} key={collection.id} className="border-none">
-            <Card className="shadow-md rounded-xl overflow-hidden bg-card">
-              <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-secondary/50">
+          <AccordionItem value={collection.id} key={collection.id} className="border rounded-lg bg-card">
+            <Card className="shadow-none border-none">
+              <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-secondary/50 rounded-t-lg">
                 <div className="flex justify-between items-center w-full">
                   <div className="text-left">
                     <p className="font-bold text-lg text-primary">{collection.schoolName}</p>
@@ -47,7 +47,7 @@ export function CollectionList({ collections }: CollectionListProps) {
                     variant={collection.synced ? 'default' : 'secondary'}
                     className={cn(
                       'transition-colors',
-                      collection.synced ? 'bg-green-500 text-white' : 'bg-amber-500 text-white'
+                      collection.synced ? 'bg-green-100 text-green-800 border-green-200' : 'bg-amber-100 text-amber-800 border-amber-200'
                     )}
                   >
                     {collection.synced ? (
@@ -59,7 +59,7 @@ export function CollectionList({ collections }: CollectionListProps) {
                   </Badge>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="p-6 pt-0 bg-card">
+              <AccordionContent className="p-6 pt-0 bg-card rounded-b-lg">
                  <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-4 text-sm">
                       <div className="flex items-center gap-3">

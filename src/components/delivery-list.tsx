@@ -17,7 +17,7 @@ interface DeliveryListProps {
 export function DeliveryList({ deliveries }: DeliveryListProps) {
   if (deliveries.length === 0) {
     return (
-      <Card className="text-center shadow-lg rounded-xl">
+      <Card>
         <CardHeader>
           <CardTitle>Nenhuma entrega registrada</CardTitle>
         </CardHeader>
@@ -32,9 +32,9 @@ export function DeliveryList({ deliveries }: DeliveryListProps) {
     <div className="space-y-4">
       <Accordion type="single" collapsible className="w-full space-y-4">
         {deliveries.map(delivery => (
-          <AccordionItem value={delivery.id} key={delivery.id} className="border-none">
-            <Card className="shadow-md rounded-xl overflow-hidden bg-card">
-              <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-secondary/50">
+          <AccordionItem value={delivery.id} key={delivery.id} className="border rounded-lg bg-card">
+            <Card className="shadow-none border-none">
+              <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-secondary/50 rounded-t-lg">
                 <div className="flex justify-between items-center w-full">
                   <div className="text-left">
                     <p className="font-bold text-lg text-primary">{delivery.schoolName}</p>
@@ -46,7 +46,7 @@ export function DeliveryList({ deliveries }: DeliveryListProps) {
                     variant={delivery.synced ? 'default' : 'secondary'}
                     className={cn(
                       'transition-colors',
-                      delivery.synced ? 'bg-green-500 text-white' : 'bg-amber-500 text-white'
+                      delivery.synced ? 'bg-green-100 text-green-800 border-green-200' : 'bg-amber-100 text-amber-800 border-amber-200'
                     )}
                   >
                     {delivery.synced ? (
@@ -58,7 +58,7 @@ export function DeliveryList({ deliveries }: DeliveryListProps) {
                   </Badge>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="p-6 pt-0 bg-card">
+              <AccordionContent className="p-6 pt-0 bg-card rounded-b-lg">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-4 text-sm">
                     <div className="flex items-center gap-3">

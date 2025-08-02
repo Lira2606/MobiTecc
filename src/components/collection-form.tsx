@@ -139,7 +139,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
   }
 
   return (
-    <Card className="w-full shadow-lg rounded-xl">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Novo Recolhimento</CardTitle>
       </CardHeader>
@@ -240,7 +240,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                         <Button type="button" onClick={handleCapture} className="w-full md:w-auto">
                           <Camera className="mr-2" /> Capturar Foto
                         </Button>
-                        <Button type="button" variant="outline" onClick={() => setShowCamera(false)} className="w-full md:w-auto">
+                        <Button type="button" variant="secondary" onClick={() => setShowCamera(false)} className="w-full md:w-auto">
                            Cancelar
                         </Button>
                       </div>

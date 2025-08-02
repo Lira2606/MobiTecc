@@ -135,7 +135,7 @@ export function DeliveryForm({ onSubmit }: DeliveryFormProps) {
   }
 
   return (
-    <Card className="w-full shadow-lg rounded-xl">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-2xl font-bold">Nova Entrega</CardTitle>
       </CardHeader>
@@ -236,7 +236,7 @@ export function DeliveryForm({ onSubmit }: DeliveryFormProps) {
                         <Button type="button" onClick={handleCapture} className="w-full md:w-auto">
                           <Camera className="mr-2" /> Capturar Foto
                         </Button>
-                         <Button type="button" variant="outline" onClick={() => setShowCamera(false)} className="w-full md:w-auto">
+                         <Button type="button" variant="secondary" onClick={() => setShowCamera(false)} className="w-full md:w-auto">
                            Cancelar
                         </Button>
                       </div>

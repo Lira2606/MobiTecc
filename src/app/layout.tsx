@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: 'MobiTec',
@@ -15,15 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body className={cn('min-h-screen bg-background font-body antialiased')}>
+      <body className={cn('min-h-screen bg-background font-sans antialiased', inter.variable)}>
         {children}
         <Toaster />
       </body>
