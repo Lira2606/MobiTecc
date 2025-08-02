@@ -14,6 +14,7 @@ export interface Delivery {
 export interface Collection {
   id: string;
   schoolName: string;
+  department?: string;
   responsibleParty: string;
   role: string;
   phoneNumber: string;

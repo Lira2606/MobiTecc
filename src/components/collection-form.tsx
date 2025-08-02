@@ -13,13 +13,14 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useState, useRef, useEffect } from 'react';
-import { Loader2, Home, User, Briefcase, Phone, Camera, X, Upload, Check, CameraOff } from 'lucide-react';
+import { Loader2, Home, User, Briefcase, Phone, Camera, X, Upload, Check, CameraOff, Building } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const formSchema = z.object({
   schoolName: z.string().min(2, { message: 'O nome da escola é obrigatório.' }),
+  department: z.string().optional(),
   responsibleParty: z.string().min(2, { message: 'O nome do responsável é obrigatório.' }),
   role: z.string().min(2, { message: 'A função é obrigatória.' }),
   phoneNumber: z.string().min(10, { message: 'O número de telefone é obrigatório.' }),
@@ -49,6 +50,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       schoolName: '',
+      department: '',
       responsibleParty: '',
       role: '',
       phoneNumber: '',
@@ -164,9 +166,24 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
             />
             <FormField
               control={form.control}
-              name="responsibleParty"
+              name="department"
               render={({ field }) => (
                 <FormItem className="fade-in-up" style={{ animationDelay: '400ms' }}>
+                  <FormControl>
+                    <div className="relative">
+                      <Building className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                      <Input placeholder="Secretaria" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
+                    </div>
+                  </FormControl>
+                  <FormMessage className="text-red-400" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="responsibleParty"
+              render={({ field }) => (
+                <FormItem className="fade-in-up" style={{ animationDelay: '500ms' }}>
                   <FormControl>
                     <div className="relative">
                       <User className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -181,7 +198,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
               control={form.control}
               name="role"
               render={({ field }) => (
-                <FormItem className="fade-in-up" style={{ animationDelay: '500ms' }}>
+                <FormItem className="fade-in-up" style={{ animationDelay: '600ms' }}>
                   <FormControl>
                     <div className="relative">
                       <Briefcase className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -196,7 +213,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
               control={form.control}
               name="phoneNumber"
               render={({ field }) => (
-                <FormItem className="fade-in-up" style={{ animationDelay: '600ms' }}>
+                <FormItem className="fade-in-up" style={{ animationDelay: '700ms' }}>
                   <FormControl>
                      <div className="relative">
                       <Phone className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -208,7 +225,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
               )}
             />
 
-            <div className="fade-in-up" style={{ animationDelay: '700ms' }}>
+            <div className="fade-in-up" style={{ animationDelay: '800ms' }}>
                 <FormControl>
                   <input
                     type="file"
@@ -282,7 +299,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 )}
             </div>
 
-          <div className="pt-4 fade-in-up" style={{ animationDelay: '800ms' }}>
+          <div className="pt-4 fade-in-up" style={{ animationDelay: '900ms' }}>
             <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-primary to-green-500 hover:from-primary/90 hover:to-green-500/90 text-white font-bold py-3 h-auto px-4 rounded-lg shadow-lg hover:shadow-primary/50 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center text-base">
               {isSubmitting ? (
                 <Loader2 className="h-5 w-5 animate-spin" />

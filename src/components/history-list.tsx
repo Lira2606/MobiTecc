@@ -84,7 +84,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
               <p className="text-sm text-slate-300">
                 <span className="font-semibold">Responsável:</span> {item.responsibleParty}
               </p>
-              {item.type === 'delivery' && item.department && (
+              {item.department && (
                  <p className="text-sm text-slate-300">
                   <span className="font-semibold">Secretaria:</span> {item.department}
                 </p>
@@ -147,7 +147,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
               <p><span className="font-semibold">Data:</span> {new Date(item.createdAt).toLocaleString('pt-BR')}</p>
               <p><span className="font-semibold">Responsável:</span> {item.responsibleParty}</p>
               <p><span className="font-semibold">Função:</span> {item.role}</p>
-              {item.type === 'delivery' && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}
+              {item.department && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}
               <p><span className="font-semibold">Telefone:</span> {item.phoneNumber}</p>
               {item.observations && <p><span className="font-semibold">Observações:</span> {item.observations}</p>}
               {item.photoDataUri && (
