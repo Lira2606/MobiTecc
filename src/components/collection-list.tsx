@@ -4,10 +4,11 @@ import type { Collection } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './ui/accordion';
-import { CheckCircle2, Clock, Phone, User, MessageSquare, Briefcase } from 'lucide-react';
+import { CheckCircle2, Clock, Phone, User, MessageSquare, Briefcase, Camera } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 
 
 interface CollectionListProps {
@@ -46,7 +47,7 @@ export function CollectionList({ collections }: CollectionListProps) {
                     variant={collection.synced ? 'default' : 'secondary'}
                     className={cn(
                       'transition-colors',
-                      collection.synced ? 'bg-green-500 text-white' : ''
+                      collection.synced ? 'bg-green-500 text-white' : 'bg-amber-500 text-white'
                     )}
                   >
                     {collection.synced ? (
@@ -59,29 +60,42 @@ export function CollectionList({ collections }: CollectionListProps) {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="p-6 pt-0 bg-card">
-                <div className="space-y-4 text-sm">
-                  <div className="flex items-center gap-3">
-                    <User className="h-4 w-4 text-muted-foreground" />
-                    <span>Responsável: <strong>{collection.responsibleParty}</strong></span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Briefcase className="h-4 w-4 text-muted-foreground" />
-                    <span>Função: <strong>{collection.role}</strong></span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span>Telefone: <strong>{collection.phoneNumber}</strong></span>
-                  </div>
-                  {collection.observations && (
-                    <div className="flex items-start gap-3">
-                      <MessageSquare className="h-4 w-4 text-muted-foreground mt-1" />
-                       <div>
-                        <p className="font-semibold">Observações:</p>
-                        <p className="text-muted-foreground">{collection.observations}</p>
+                 <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4 text-sm">
+                      <div className="flex items-center gap-3">
+                        <User className="h-4 w-4 text-muted-foreground" />
+                        <span>Responsável: <strong>{collection.responsibleParty}</strong></span>
                       </div>
+                      <div className="flex items-center gap-3">
+                        <Briefcase className="h-4 w-4 text-muted-foreground" />
+                        <span>Função: <strong>{collection.role}</strong></span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Phone className="h-4 w-4 text-muted-foreground" />
+                        <span>Telefone: <strong>{collection.phoneNumber}</strong></span>
+                      </div>
+                      {collection.observations && (
+                        <div className="flex items-start gap-3">
+                          <MessageSquare className="h-4 w-4 text-muted-foreground mt-1" />
+                           <div>
+                            <p className="font-semibold">Observações:</p>
+                            <p className="text-muted-foreground">{collection.observations}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
+                    <div className="space-y-2">
+                        {collection.photoDataUri ? (
+                          <div className="relative aspect-video">
+                            <Image src={collection.photoDataUri} alt="Foto da coleta" layout="fill" className="rounded-md object-cover"/>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center h-full bg-muted rounded-md aspect-video">
+                            <Camera className="h-10 w-10 text-muted-foreground" />
+                          </div>
+                        )}
+                    </div>
+                 </div>
               </AccordionContent>
             </Card>
           </AccordionItem>
