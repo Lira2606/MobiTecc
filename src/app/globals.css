@@ -42,25 +42,49 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-sans), sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 }
 
+@layer components {
+  .mobile-shell {
+    background: linear-gradient(-45deg, #1f2937, #111827, #0d2438, #1a1a2e);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    padding: 1rem;
+    border-radius: 2.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  }
+  .mobile-screen {
+    height: 850px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    background: #111827;
+    --gradient-x: 50%;
+    --gradient-y: 50%;
+    background-image: radial-gradient(circle at var(--gradient-x) var(--gradient-y), rgba(20, 184, 166, 0.15), transparent 40%);
+  }
+  .glassmorphism {
+      background-color: rgba(30, 41, 59, 0.7); 
+      backdrop-filter: blur(12px); 
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+
 @layer utilities {
-    .glassmorphism {
-        background-color: rgba(30, 41, 59, 0.7); 
-        backdrop-filter: blur(12px); 
-        -webkit-backdrop-filter: blur(12px);
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
     .fade-in-up { 
         animation: fadeInUp 0.5s ease-out forwards;
         opacity: 0;
     }
     
+    .nav-link:hover {
+      transform: scale(1.1);
+      color: white;
+    }
+
     @keyframes gradientBG { 
         0% { background-position: 0% 50%; } 
         50% { background-position: 100% 50%; } 
