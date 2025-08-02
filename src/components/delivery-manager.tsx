@@ -112,7 +112,7 @@ export function DeliveryManager() {
     <div className="pb-24 md:pb-0">
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'deliveries' | 'collections')} className="space-y-8">
         <div className="hidden md:flex justify-center">
-            <TabsList>
+            <TabsList className="hidden">
             <TabsTrigger value="deliveries">Entregas</TabsTrigger>
             <TabsTrigger value="collections">Recolhimentos</TabsTrigger>
             </TabsList>
