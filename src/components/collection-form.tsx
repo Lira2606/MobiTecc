@@ -15,8 +15,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Loader2, Camera, Trash2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
 
 const formSchema = z.object({
@@ -25,6 +28,7 @@ const formSchema = z.object({
   role: z.string().min(2, { message: 'A função é obrigatória.' }),
   phoneNumber: z.string().min(8, { message: 'O número de telefone é obrigatório.' }),
   observations: z.string().optional(),
+  photoDataUri: z.string().optional(),
 });
 
 type CollectionFormValues = z.infer<typeof formSchema>;
@@ -36,6 +40,40 @@ interface CollectionFormProps {
 
 export function CollectionForm({ onSubmit }: CollectionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [photoDataUri, setPhotoDataUri] = useState<string | null>(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const getCameraPermission = async () => {
+       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setHasCameraPermission(false);
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        setHasCameraPermission(true);
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        setHasCameraPermission(false);
+      }
+    };
+
+    getCameraPermission();
+    
+    return () => {
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, []);
+
 
   const form = useForm<CollectionFormValues>({
     resolver: zodResolver(formSchema),
@@ -45,15 +83,38 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
       role: '',
       phoneNumber: '',
       observations: '',
+      photoDataUri: '',
     },
   });
+  
+  const handleCapture = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const context = canvas.getContext('2d');
+      if (context) {
+        context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+        const dataUri = canvas.toDataURL('image/jpeg');
+        setPhotoDataUri(dataUri);
+        form.setValue('photoDataUri', dataUri);
+      }
+    }
+  };
+
 
   const handleSubmit = (data: CollectionFormValues) => {
     setIsSubmitting(true);
     onSubmit(data);
     form.reset();
+    setPhotoDataUri(null);
     setTimeout(() => setIsSubmitting(false), 1000);
   };
+  
+  const handleClearPhoto = () => {
+    setPhotoDataUri(null);
+    form.setValue('photoDataUri', undefined);
+  }
 
   return (
     <Card className="w-full shadow-lg rounded-xl">
@@ -120,6 +181,40 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 )}
               />
             </div>
+
+            <FormItem>
+              <FormLabel>Foto</FormLabel>
+              <div className="space-y-4">
+                 {hasCameraPermission === false && (
+                    <Alert variant="destructive">
+                      <AlertTitle>Câmera não disponível</AlertTitle>
+                      <AlertDescription>
+                        Não foi possível acessar a câmera. Por favor, verifique as permissões no seu navegador.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                {photoDataUri ? (
+                  <div className="relative">
+                    <Image src={photoDataUri} alt="Foto da coleta" width={400} height={300} className="rounded-md w-full object-cover" />
+                     <Button type="button" variant="destructive" size="icon" onClick={handleClearPhoto} className="absolute top-2 right-2">
+                      <Trash2 />
+                    </Button>
+                  </div>
+                ) : (
+                  hasCameraPermission && (
+                     <>
+                      <div className="w-full bg-muted rounded-md overflow-hidden aspect-video relative">
+                          <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
+                      </div>
+                      <Button type="button" onClick={handleCapture} className="w-full md:w-auto">
+                        <Camera className="mr-2" /> Capturar Foto
+                      </Button>
+                    </>
+                  )
+                )}
+              </div>
+            </FormItem>
+
             <FormField
               control={form.control}
               name="observations"

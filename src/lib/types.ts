@@ -7,6 +7,7 @@ export interface Delivery {
   observations?: string;
   createdAt: string; // ISO string
   synced: boolean;
+  photoDataUri?: string;
 }
 
 export interface Collection {
@@ -18,4 +19,5 @@ export interface Collection {
   observations?: string;
   createdAt: string; // ISO string
   synced: boolean;
+  photoDataUri?: string;
 }

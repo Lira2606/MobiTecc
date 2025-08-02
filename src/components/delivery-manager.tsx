@@ -138,7 +138,7 @@ export function DeliveryManager() {
           <div className="fixed bottom-4 right-4 z-50">
             <Button onClick={syncPendingData} disabled={isSyncing} size="lg" className="shadow-lg">
               <CloudUpload className="mr-2 h-5 w-5" />
-              {isSyncing ? 'Sincronizando...' : `Sincronizar ${pendingCount} Item(ns)`}
+              {isSyncing ? 'Sincronizando...' : `Sincronizar ${pendingCount} item(ns)`}
             </Button>
           </div>
         )}
