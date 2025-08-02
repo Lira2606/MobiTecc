@@ -8,12 +8,15 @@ import { DeliveryForm } from './delivery-form';
 import { DeliveryList } from './delivery-list';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { CloudUpload } from 'lucide-react';
+import { CloudUpload, Truck, PackageOpen } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CollectionForm } from './collection-form';
 import { CollectionList } from './collection-list';
+import { cn } from '@/lib/utils';
+
 
 export function DeliveryManager() {
+  const [activeTab, setActiveTab] = useState<'deliveries' | 'collections'>('deliveries');
   const [deliveries, setDeliveries] = useLocalStorage<Delivery[]>('deliveries', []);
   const [collections, setCollections] = useLocalStorage<Collection[]>('collections', []);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -106,42 +109,71 @@ export function DeliveryManager() {
 
 
   return (
-    <Tabs defaultValue="deliveries" className="space-y-8">
-      <div className="flex justify-center">
-        <TabsList>
-          <TabsTrigger value="deliveries">Entregas</TabsTrigger>
-          <TabsTrigger value="collections">Recolhimentos</TabsTrigger>
-        </TabsList>
-      </div>
-
-      <TabsContent value="deliveries" className="space-y-8">
-        <DeliveryForm onSubmit={handleAddDelivery} allSchoolNames={allSchoolNames} />
-        <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <h2 className="text-2xl font-bold font-headline">Entregas Recentes</h2>
-          </div>
-          <DeliveryList deliveries={deliveries} />
+    <div className="pb-24 md:pb-0">
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'deliveries' | 'collections')} className="space-y-8">
+        <div className="hidden md:flex justify-center">
+            <TabsList>
+            <TabsTrigger value="deliveries">Entregas</TabsTrigger>
+            <TabsTrigger value="collections">Recolhimentos</TabsTrigger>
+            </TabsList>
         </div>
-      </TabsContent>
 
-      <TabsContent value="collections" className="space-y-8">
-        <CollectionForm onSubmit={handleAddCollection} allSchoolNames={allSchoolNames} />
-         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <h2 className="text-2xl font-bold font-headline">Recolhimentos Recentes</h2>
-          </div>
-          <CollectionList collections={collections} />
-        </div>
-      </TabsContent>
+        <TabsContent value="deliveries" className="space-y-8 mt-0">
+            <DeliveryForm onSubmit={handleAddDelivery} allSchoolNames={allSchoolNames} />
+            <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 className="text-2xl font-bold font-headline">Entregas Recentes</h2>
+            </div>
+            <DeliveryList deliveries={deliveries} />
+            </div>
+        </TabsContent>
+
+        <TabsContent value="collections" className="space-y-8 mt-0">
+            <CollectionForm onSubmit={handleAddCollection} allSchoolNames={allSchoolNames} />
+            <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 className="text-2xl font-bold font-headline">Recolhimentos Recentes</h2>
+            </div>
+            <CollectionList collections={collections} />
+            </div>
+        </TabsContent>
+        </Tabs>
+
 
        {isOnline && pendingCount > 0 && (
-          <div className="fixed bottom-4 right-4 z-50">
+          <div className="fixed bottom-20 md:bottom-4 right-4 z-50">
             <Button onClick={syncPendingData} disabled={isSyncing} size="lg" className="shadow-lg">
               <CloudUpload className="mr-2 h-5 w-5" />
               {isSyncing ? 'Sincronizando...' : `Sincronizar ${pendingCount} item(ns)`}
             </Button>
           </div>
         )}
-    </Tabs>
+
+        {/* Mobile Navigation */}
+        <div className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg z-50">
+            <div className="flex justify-around items-center h-16">
+                <button
+                    onClick={() => setActiveTab('deliveries')}
+                    className={cn(
+                        "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
+                        activeTab === 'deliveries' ? 'text-primary' : 'text-muted-foreground'
+                    )}
+                >
+                    <Truck className="h-6 w-6 mb-1" />
+                    <span>Entregas</span>
+                </button>
+                <button
+                    onClick={() => setActiveTab('collections')}
+                    className={cn(
+                        "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
+                        activeTab === 'collections' ? 'text-primary' : 'text-muted-foreground'
+                    )}
+                >
+                    <PackageOpen className="h-6 w-6 mb-1" />
+                    <span>Recolhimentos</span>
+                </button>
+            </div>
+        </div>
+    </div>
   );
 }
