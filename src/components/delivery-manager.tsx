@@ -282,15 +282,15 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
                         {generatedContent}
                     </div>
                     <AlertDialogFooter>
+                        <AlertDialogAction onClick={handleCopyToClipboard}>
+                            <ClipboardCopy className="mr-2" /> Copiar
+                        </AlertDialogAction>
                         {telegramLink && (
                             <Button variant="outline" className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border-blue-500/30" onClick={() => window.open(telegramLink, '_blank')}>
                                 <Send className="mr-2"/> Enviar via Telegram
                             </Button>
                         )}
                         <AlertDialogCancel>Fechar</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleCopyToClipboard}>
-                            <ClipboardCopy className="mr-2" /> Copiar
-                        </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
