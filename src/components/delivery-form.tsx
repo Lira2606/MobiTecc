@@ -169,13 +169,13 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
               <FormField
                 control={form.control}
-                name="schoolName"
+                name="department"
                 render={({ field }) => (
                   <FormItem className="fade-in-up" style={{ animationDelay: '300ms' }}>
                     <FormControl>
                       <div className="relative">
-                        <Home className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                        <Input placeholder="Nome da Escola" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
+                        <Building className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                        <Input placeholder="Secretaria" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
                       </div>
                     </FormControl>
                     <FormMessage className="text-red-400" />
@@ -184,13 +184,13 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
               />
               <FormField
                 control={form.control}
-                name="department"
+                name="schoolName"
                 render={({ field }) => (
                   <FormItem className="fade-in-up" style={{ animationDelay: '400ms' }}>
                     <FormControl>
                       <div className="relative">
-                        <Building className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                        <Input placeholder="Secretaria" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
+                        <Home className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                        <Input placeholder="Nome da Escola" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
                       </div>
                     </FormControl>
                     <FormMessage className="text-red-400" />
@@ -206,7 +206,7 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
                       <div className="relative">
                         <Package className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                           <SelectTrigger className="pl-12 h-14 bg-slate-800 border-slate-700 data-[placeholder]:text-muted-foreground">
+                           <SelectTrigger className="pl-12 h-14 bg-slate-800 border-slate-700 data-[placeholder]:text-muted-foreground text-white">
                             <SelectValue placeholder="Selecione o item" />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-800 border-slate-700 text-white">
