@@ -1,0 +1,61 @@
+'use server';
+
+/**
+ * @fileOverview Generates a message based on registration details.
+ *
+ * - generateMessage - A function that generates a message.
+ * - GenerateMessageInput - The input type for the generateMessage function.
+ * - GenerateMessageOutput - The return type for the generateMessage function.
+ */
+
+import {ai} from '@/ai/genkit';
+import {z} from 'genkit';
+
+const GenerateMessageInputSchema = z.object({
+  type: z.enum(['delivery', 'collection']).describe('The type of registration: delivery or collection.'),
+  responsibleParty: z.string().describe('The name of the responsible person.'),
+  item: z.string().describe('The item that was delivered or collected.'),
+  schoolName: z.string().describe('The name of the school.'),
+});
+export type GenerateMessageInput = z.infer<typeof GenerateMessageInputSchema>;
+
+const GenerateMessageOutputSchema = z.object({
+  message: z.string().describe('A friendly message for the responsible person.'),
+});
+export type GenerateMessageOutput = z.infer<typeof GenerateMessageOutputSchema>;
+
+export async function generateMessage(input: GenerateMessageInput): Promise<GenerateMessageOutput> {
+  return generateMessageFlow(input);
+}
+
+const prompt = ai.definePrompt({
+  name: 'generateMessagePrompt',
+  input: {schema: GenerateMessageInputSchema},
+  output: {schema: GenerateMessageOutputSchema},
+  prompt: `You are a helpful assistant. Create a friendly and professional WhatsApp message in Brazilian Portuguese.
+The message is for {{responsibleParty}} to confirm a registration.
+
+The registration type is '{{type}}'.
+The item is '{{item}}'.
+The location is the school '{{schoolName}}'.
+
+- If the type is 'delivery', the message should confirm the successful delivery of the item.
+- If the type is 'collection', the message should confirm the successful collection of the item.
+
+The message should be polite and clear. Start with a greeting.
+Example for delivery: "Olá, {{responsibleParty}}! Confirmando que o item '{{item}}' foi entregue com sucesso na escola {{schoolName}}. Agradecemos a colaboração!"
+Example for collection: "Olá, {{responsibleParty}}! Passando para confirmar que o item '{{item}}' foi recolhido com sucesso na escola {{schoolName}}. Obrigado!"
+`,
+});
+
+const generateMessageFlow = ai.defineFlow(
+  {
+    name: 'generateMessageFlow',
+    inputSchema: GenerateMessageInputSchema,
+    outputSchema: GenerateMessageOutputSchema,
+  },
+  async input => {
+    const {output} = await prompt(input);
+    return output!;
+  }
+);

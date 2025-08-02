@@ -1,5 +1,6 @@
 export interface Delivery {
   id: string;
+  type: 'delivery';
   schoolName: string;
   department?: string;
   item: string;
@@ -14,6 +15,7 @@ export interface Delivery {
 
 export interface Collection {
   id: string;
+  type: 'collection';
   schoolName: string;
   department?: string;
   item: string;
@@ -25,3 +27,5 @@ export interface Collection {
   synced: boolean;
   photoDataUri?: string;
 }
+
+export type HistoryItem = Delivery | Collection;

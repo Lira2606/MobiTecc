@@ -2,21 +2,35 @@
 
 import { useState, useMemo } from 'react';
 import { useLocalStorage } from '@/hooks/use-local-storage';
-import type { Delivery, Collection } from '@/lib/types';
+import type { Delivery, Collection, HistoryItem } from '@/lib/types';
 import { DeliveryForm } from './delivery-form';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList } from 'lucide-react';
+import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList, Bot, ClipboardCopy, Loader2 } from 'lucide-react';
 import { CollectionForm } from './collection-form';
 import { cn } from '@/lib/utils';
 import { Header } from './header';
 import { HistoryList } from './history-list';
 import { useOnlineStatus } from '@/hooks/use-online-status';
+import { generateMessage } from '@/ai/flows/generate-message';
+import { createSummary } from '@/ai/flows/create-summary';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+
 
 export function DeliveryManager() {
   const [activeTab, setActiveTab] = useState<'deliveries' | 'collections' | 'visits' | 'shipments' | 'history'>('deliveries');
   const [deliveries, setDeliveries] = useLocalStorage<Delivery[]>('deliveries', []);
   const [collections, setCollections] = useLocalStorage<Collection[]>('collections', []);
+  const [lastItem, setLastItem] = useState<HistoryItem | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const { toast } = useToast();
@@ -68,9 +82,11 @@ export function DeliveryManager() {
       ...newDeliveryData,
       id: new Date().toISOString() + Math.random(),
       createdAt: new Date().toISOString(),
-      synced: false,
+      synced: isOnline,
+      type: 'delivery',
     };
     setDeliveries(prev => [newDelivery, ...prev]);
+    setLastItem(newDelivery);
     setShowSuccess(true);
   };
 
@@ -79,9 +95,11 @@ export function DeliveryManager() {
       ...newCollectionData,
       id: new Date().toISOString() + Math.random(),
       createdAt: new Date().toISOString(),
-      synced: false,
+      synced: isOnline,
+      type: 'collection',
     };
     setCollections(prev => [newCollection, ...prev]);
+    setLastItem(newCollection);
     setShowSuccess(true);
   };
 
@@ -103,11 +121,12 @@ export function DeliveryManager() {
   
   const resetForm = () => {
     setShowSuccess(false);
+    setLastItem(null);
   }
 
   const renderContent = () => {
-    if (showSuccess) {
-      return <SuccessScreen onNewDelivery={resetForm} />;
+    if (showSuccess && lastItem) {
+      return <SuccessScreen onNewRecord={resetForm} lastItem={lastItem} />;
     }
 
     switch (activeTab) {
@@ -145,23 +164,23 @@ export function DeliveryManager() {
         </main>
         
         <nav className="glassmorphism flex justify-around items-center p-3 mt-auto w-full z-10">
-            <button onClick={() => { setActiveTab('deliveries'); setShowSuccess(false); }} className={getButtonClass('deliveries')}>
+            <button onClick={() => { setActiveTab('deliveries'); resetForm(); }} className={getButtonClass('deliveries')}>
                 <Truck className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Entregas</span>
             </button>
-            <button onClick={() => { setActiveTab('collections'); setShowSuccess(false); }} className={getButtonClass('collections')}>
+            <button onClick={() => { setActiveTab('collections'); resetForm(); }} className={getButtonClass('collections')}>
                 <PackageOpen className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Recolhimentos</span>
             </button>
-            <button onClick={() => { setActiveTab('visits'); setShowSuccess(false); }} className={getButtonClass('visits')}>
+            <button onClick={() => { setActiveTab('visits'); resetForm(); }} className={getButtonClass('visits')}>
                 <Users className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Visitas</span>
             </button>
-            <button onClick={() => { setActiveTab('shipments'); setShowSuccess(false); }} className={getButtonClass('shipments')}>
+            <button onClick={() => { setActiveTab('shipments'); resetForm(); }} className={getButtonClass('shipments')}>
                 <Plane className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Envios</span>
             </button>
-             <button onClick={() => { setActiveTab('history'); setShowSuccess(false); }} className={getButtonClass('history')}>
+             <button onClick={() => { setActiveTab('history'); resetForm(); }} className={getButtonClass('history')}>
                 <ClipboardList className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Registros</span>
             </button>
@@ -171,33 +190,100 @@ export function DeliveryManager() {
 }
 
 
-function SuccessScreen({ onNewDelivery }: { onNewDelivery: () => void }) {
+function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, lastItem: HistoryItem }) {
     const { toast } = useToast();
-    const handleGeminiClick = (type: string) => {
+    const [generatedContent, setGeneratedContent] = useState('');
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogTitle, setDialogTitle] = useState('');
+
+    const handleGenerateClick = async (type: 'message' | 'summary') => {
+        setIsGenerating(true);
+        setDialogTitle(type === 'message' ? 'Mensagem Gerada' : 'Resumo Gerado');
+
+        try {
+            if (type === 'message') {
+                const result = await generateMessage({
+                    type: lastItem.type,
+                    responsibleParty: lastItem.responsibleParty,
+                    item: lastItem.item,
+                    schoolName: lastItem.schoolName,
+                });
+                setGeneratedContent(result.message);
+            } else {
+                const result = await createSummary({
+                    type: lastItem.type,
+                    responsibleParty: lastItem.responsibleParty,
+                    item: lastItem.item,
+                    schoolName: lastItem.schoolName,
+                    department: lastItem.department,
+                    createdAt: lastItem.createdAt,
+                });
+                setGeneratedContent(result.summary);
+            }
+            setDialogOpen(true);
+        } catch (error) {
+            console.error('Error generating content:', error);
+            toast({
+                variant: 'destructive',
+                title: 'Erro ao gerar conteúdo',
+                description: 'Não foi possível se conectar à IA. Tente novamente.',
+            });
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+    
+    const handleCopyToClipboard = () => {
+        navigator.clipboard.writeText(generatedContent);
         toast({
-            title: `Gerando ${type}...`,
-            description: 'Esta funcionalidade será implementada em breve.',
+            title: 'Copiado!',
+            description: 'O conteúdo foi copiado para a área de transferência.',
         });
-    }
+    };
 
     return (
-        <div className="flex flex-col items-center justify-center p-8 text-center h-full">
-            <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mb-6 fade-in-up">
-                <CheckCircle2 className="w-16 h-16 text-green-400" />
-            </div>
-            <h2 className="text-3xl font-bold text-white mb-2 fade-in-up" style={{animationDelay: '100ms'}}>Registrado!</h2>
-            <p className="text-gray-400 text-center mb-4 fade-in-up" style={{animationDelay: '200ms'}}>Os detalhes foram guardados com sucesso.</p>
-            <div className="w-full space-y-3 mt-4 fade-in-up" style={{animationDelay: '300ms'}}>
-                <Button onClick={() => handleGeminiClick('Mensagem')} variant="outline" className="w-full bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border-sky-500/30 hover:text-sky-200">
-                    ✨ Gerar Mensagem
+        <>
+            <div className="flex flex-col items-center justify-center p-8 text-center h-full">
+                <div className="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mb-6 fade-in-up">
+                    <CheckCircle2 className="w-16 h-16 text-green-400" />
+                </div>
+                <h2 className="text-3xl font-bold text-white mb-2 fade-in-up" style={{animationDelay: '100ms'}}>Registrado!</h2>
+                <p className="text-gray-400 text-center mb-4 fade-in-up" style={{animationDelay: '200ms'}}>Os detalhes foram guardados com sucesso.</p>
+                <div className="w-full space-y-3 mt-4 fade-in-up" style={{animationDelay: '300ms'}}>
+                    <Button onClick={() => handleGenerateClick('message')} disabled={isGenerating} variant="outline" className="w-full bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border-sky-500/30 hover:text-sky-200">
+                         {isGenerating ? <Loader2 className="animate-spin" /> : '✨ Gerar Mensagem'}
+                    </Button>
+                    <Button onClick={() => handleGenerateClick('summary')} disabled={isGenerating} variant="outline" className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border-purple-500/30 hover:text-purple-200">
+                        {isGenerating ? <Loader2 className="animate-spin" /> : '✨ Criar Resumo'}
+                    </Button>
+                </div>
+                <Button onClick={onNewRecord} className="mt-6 bg-slate-700 hover:bg-slate-600 text-white font-bold fade-in-up" style={{animationDelay: '400ms'}}>
+                    Novo Registro
                 </Button>
-                <Button onClick={() => handleGeminiClick('Resumo')} variant="outline" className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border-purple-500/30 hover:text-purple-200">
-                    ✨ Criar Resumo
-                </Button>
             </div>
-            <Button onClick={onNewDelivery} className="mt-6 bg-slate-700 hover:bg-slate-600 text-white font-bold fade-in-up" style={{animationDelay: '400ms'}}>
-                Novo Registro
-            </Button>
-        </div>
+
+            <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="flex items-center gap-2">
+                           <Bot className="text-primary" /> {dialogTitle}
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Abaixo está o conteúdo gerado pela IA. Você pode copiá-lo para usar onde precisar.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <div className="my-4 p-4 bg-slate-700/50 rounded-md text-sm text-slate-200 whitespace-pre-wrap">
+                        {generatedContent}
+                    </div>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Fechar</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleCopyToClipboard}>
+                            <ClipboardCopy className="mr-2" /> Copiar
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
     );
 }
