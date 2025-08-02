@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'Entrega Fácil',
+  title: 'MobiTec',
   description: 'Gerencie suas entregas de forma fácil e eficiente.',
 };
 

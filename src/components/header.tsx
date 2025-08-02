@@ -12,7 +12,7 @@ export function Header() {
         <div className="flex items-center gap-3">
           <Truck className="h-8 w-8 text-primary" />
           <h1 className="text-xl md:text-2xl font-bold font-headline text-primary">
-            Entrega Fácil
+            MobiTec
           </h1>
         </div>
         <Badge variant={isOnline ? 'default' : 'destructive'} className="transition-all text-white">
