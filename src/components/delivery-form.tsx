@@ -11,6 +11,7 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import { useState, useRef, useEffect } from 'react';
 import { Loader2, Home, User, Briefcase, Phone, Camera, X, Upload, Check, CameraOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -152,12 +153,10 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
               render={({ field }) => (
                 <FormItem className="fade-in-up" style={{ animationDelay: '300ms' }}>
                   <FormControl>
-                    <FloatingLabelInput
-                      id="schoolName"
-                      label="Nome da Escola"
-                      icon={<Home className="w-5 h-5 text-gray-400" />}
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Home className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                      <Input placeholder="Nome da Escola" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
+                    </div>
                   </FormControl>
                   <FormMessage className="text-red-400" />
                 </FormItem>
@@ -169,12 +168,10 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
               render={({ field }) => (
                 <FormItem className="fade-in-up" style={{ animationDelay: '400ms' }}>
                   <FormControl>
-                    <FloatingLabelInput
-                      id="responsibleParty"
-                      label="Nome do Responsável"
-                      icon={<User className="w-5 h-5 text-gray-400" />}
-                      {...field}
-                    />
+                    <div className="relative">
+                      <User className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                      <Input placeholder="Nome do Responsável" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
+                    </div>
                   </FormControl>
                   <FormMessage className="text-red-400" />
                 </FormItem>
@@ -186,12 +183,10 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
               render={({ field }) => (
                 <FormItem className="fade-in-up" style={{ animationDelay: '500ms' }}>
                   <FormControl>
-                    <FloatingLabelInput
-                      id="role"
-                      label="Função (Ex: Professor)"
-                      icon={<Briefcase className="w-5 h-5 text-gray-400" />}
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Briefcase className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                      <Input placeholder="Função (Ex: Professor)" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
+                    </div>
                   </FormControl>
                   <FormMessage className="text-red-400" />
                 </FormItem>
@@ -203,13 +198,10 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
               render={({ field }) => (
                 <FormItem className="fade-in-up" style={{ animationDelay: '600ms' }}>
                   <FormControl>
-                    <FloatingLabelInput
-                      id="phoneNumber"
-                      label="(XX) XXXXX-XXXX"
-                      type="tel"
-                      icon={<Phone className="w-5 h-5 text-gray-400" />}
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Phone className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                      <Input placeholder="(XX) XXXXX-XXXX" type="tel" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
+                    </div>
                   </FormControl>
                   <FormMessage className="text-red-400" />
                 </FormItem>
@@ -303,28 +295,4 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
       </Form>
     </>
   );
-}
-
-// Reusable FloatingLabelInput component
-function FloatingLabelInput({ id, label, type = 'text', icon, ...props }: { id: string, label: string, type?: string, icon: React.ReactNode, [key: string]: any }) {
-  return (
-    <div className="form-group relative">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-            {icon}
-        </div>
-        <input 
-            id={id}
-            type={type}
-            className="form-input w-full p-4 pl-12 bg-slate-800 border border-slate-700 text-white rounded-lg transition-all duration-200 ease-in-out focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 peer h-14 shadow-inner"
-            placeholder=" " 
-            {...props}
-        />
-        <label 
-            htmlFor={id} 
-            className="form-label absolute left-12 top-4 text-gray-400 pointer-events-none transition-all duration-200 ease-in-out peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-primary peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-primary"
-        >
-            {label}
-        </label>
-    </div>
-  )
 }
