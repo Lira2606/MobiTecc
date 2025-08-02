@@ -11,10 +11,11 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form';
-import { useState, useRef } from 'react';
-import { Loader2, Home, User, Briefcase, Phone, Camera, X, Upload } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Loader2, Home, User, Briefcase, Phone, Camera, X, Upload, Check, CameraOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const formSchema = z.object({
   schoolName: z.string().min(2, { message: 'O nome da escola é obrigatório.' }),
@@ -35,7 +36,12 @@ interface CollectionFormProps {
 export function CollectionForm({ onSubmit }: CollectionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [isTakingPhoto, setIsTakingPhoto] = useState(false);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const { toast } = useToast();
 
   const form = useForm<CollectionFormValues>({
@@ -49,6 +55,43 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
       photoDataUri: '',
     },
   });
+
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+    const getCameraPermission = async () => {
+      if (!isTakingPhoto) {
+         if (videoRef.current && videoRef.current.srcObject) {
+            (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+            videoRef.current.srcObject = null;
+          }
+        return;
+      }
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({video: true});
+        setHasCameraPermission(true);
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        setHasCameraPermission(false);
+        toast({
+          variant: 'destructive',
+          title: 'Acesso à câmera negado',
+          description: 'Por favor, habilite a permissão da câmera nas configurações do seu navegador.',
+        });
+        setIsTakingPhoto(false);
+      }
+    };
+
+    getCameraPermission();
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [isTakingPhoto, toast]);
 
   const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -69,14 +112,24 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+    setIsTakingPhoto(false);
   };
-
-  const openCamera = () => {
-      toast({
-          title: 'Funcionalidade em desenvolvimento',
-          description: 'O acesso à câmera será implementado em breve.',
-      });
-  }
+  
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const context = canvasRef.current.getContext('2d');
+      if (context) {
+        const video = videoRef.current;
+        canvasRef.current.width = video.videoWidth;
+        canvasRef.current.height = video.videoHeight;
+        context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+        const dataUri = canvasRef.current.toDataURL('image/jpeg');
+        setPhotoPreview(dataUri);
+        form.setValue('photoDataUri', dataUri);
+        setIsTakingPhoto(false);
+      }
+    }
+  };
 
   const handleSubmit = (data: CollectionFormValues) => {
     setIsSubmitting(true);
@@ -173,7 +226,31 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                     onChange={handlePhotoChange}
                   />
                 </FormControl>
-                {photoPreview ? (
+
+                 <canvas ref={canvasRef} className="hidden" />
+
+                {isTakingPhoto ? (
+                    <div className="space-y-4">
+                        <video ref={videoRef} className="w-full aspect-video rounded-md bg-slate-800" autoPlay muted />
+                        {hasCameraPermission === false && (
+                            <Alert variant="destructive">
+                                <CameraOff className="h-4 w-4" />
+                                <AlertTitle>Acesso à câmera negado</AlertTitle>
+                                <AlertDescription>
+                                    Habilite a permissão da câmera para tirar fotos.
+                                </AlertDescription>
+                            </Alert>
+                        )}
+                         <div className="grid grid-cols-2 gap-4">
+                            <Button type="button" onClick={capturePhoto} disabled={!hasCameraPermission}>
+                                <Check className="mr-2 h-4 w-4" /> Capturar
+                            </Button>
+                             <Button type="button" variant="outline" onClick={() => setIsTakingPhoto(false)}>
+                                <X className="mr-2 h-4 w-4" /> Cancelar
+                            </Button>
+                        </div>
+                    </div>
+                ) : photoPreview ? (
                   <div className="relative group mx-auto w-fit">
                     <Image
                       src={photoPreview}
@@ -203,7 +280,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                     </button>
                     <button
                         type="button"
-                        onClick={openCamera}
+                        onClick={() => setIsTakingPhoto(true)}
                         className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#334155] rounded-lg text-gray-400 hover:bg-[#1e293b] hover:border-teal-500 transition-all"
                     >
                         <Camera className="w-8 h-8 mb-2" />
