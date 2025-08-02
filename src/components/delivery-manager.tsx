@@ -11,6 +11,7 @@ import { CollectionForm } from './collection-form';
 import { cn } from '@/lib/utils';
 import { Header } from './header';
 import { HistoryList } from './history-list';
+import { useOnlineStatus } from '@/hooks/use-online-status';
 
 export function DeliveryManager() {
   const [activeTab, setActiveTab] = useState<'deliveries' | 'collections' | 'visits' | 'shipments' | 'history'>('deliveries');
@@ -19,6 +20,48 @@ export function DeliveryManager() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const { toast } = useToast();
+  const isOnline = useOnlineStatus();
+
+  const unsyncedCount = useMemo(() => {
+    const unsyncedDeliveries = deliveries.filter(d => !d.synced).length;
+    const unsyncedCollections = collections.filter(c => !c.synced).length;
+    return unsyncedDeliveries + unsyncedCollections;
+  }, [deliveries, collections]);
+
+  const handleSync = () => {
+    if (!isOnline) {
+      toast({
+        variant: 'destructive',
+        title: 'Você está offline!',
+        description: 'Conecte-se à internet para salvar os registros.',
+      });
+      return;
+    }
+
+    if (unsyncedCount === 0) {
+      toast({
+        title: 'Tudo em dia!',
+        description: 'Todos os seus registros já estão salvos.',
+      });
+      return;
+    }
+    
+    // Simulate API call
+    toast({
+      title: 'Salvando registros...',
+      description: `Sincronizando ${unsyncedCount} registro(s).`,
+    });
+
+    setTimeout(() => {
+      setDeliveries(prev => prev.map(d => ({ ...d, synced: true })));
+      setCollections(prev => prev.map(c => ({ ...c, synced: true })));
+      toast({
+        title: 'Sucesso!',
+        description: 'Todos os registros foram salvos na nuvem.',
+      });
+    }, 1500);
+  };
+
 
   const handleAddDelivery = (newDeliveryData: Omit<Delivery, 'id' | 'createdAt' | 'synced'>) => {
     const newDelivery: Delivery = {
@@ -92,7 +135,11 @@ export function DeliveryManager() {
 
   return (
     <div className="flex flex-col flex-grow h-full">
-        <Header />
+        <Header 
+          unsyncedCount={unsyncedCount}
+          onSync={handleSync}
+          isOnline={isOnline}
+        />
         <main className="flex-grow p-6 overflow-y-auto transition-all duration-500">
             {renderContent()}
         </main>

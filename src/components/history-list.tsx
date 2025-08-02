@@ -30,14 +30,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { PackageOpen, Truck, Trash2, Eye } from 'lucide-react';
+import { PackageOpen, Truck, Trash2, Eye, Cloud, CloudOff } from 'lucide-react';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 interface HistoryListProps {
   deliveries: Delivery[];
   collections: Collection[];
   onDeleteDelivery: (id: string) => void;
-  onDeleteCollection: (id: string) => void;
+  onDeleteCollection: (id:string) => void;
 }
 
 export function HistoryList({ deliveries, collections, onDeleteDelivery, onDeleteCollection }: HistoryListProps) {
@@ -68,7 +69,12 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
                 ) : (
                   <PackageOpen className="w-6 h-6 text-primary" />
                 )}
-                <span className="truncate">{item.schoolName}</span>
+                <span className="truncate flex-1">{item.schoolName}</span>
+                 {item.synced ? (
+                  <Cloud className="w-5 h-5 text-green-400" title="Sincronizado" />
+                ) : (
+                  <CloudOff className="w-5 h-5 text-gray-500" title="Não sincronizado" />
+                )}
               </CardTitle>
               <CardDescription className="text-slate-400">
                 {new Date(item.createdAt).toLocaleString('pt-BR', {
@@ -81,7 +87,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-grow">
-              <p className="text-sm text-slate-300">
+               <p className="text-sm text-slate-300">
                 <span className="font-semibold">Item:</span> {item.item}
               </p>
               <p className="text-sm text-slate-300">
@@ -92,18 +98,10 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
                   <span className="font-semibold">Secretaria:</span> {item.department}
                 </p>
               )}
-              <p className="text-sm text-slate-300">
-                <span className="font-semibold">Telefone:</span> {item.phoneNumber}
-              </p>
-              {item.observations && (
-                <p className="text-sm text-slate-300 mt-2 italic">
-                  "{item.observations}"
-                </p>
-              )}
             </CardContent>
             <CardFooter className="flex justify-end gap-2 p-4">
               <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="hover:text-accent-foreground text-white">
+                <Button variant="ghost" size="sm" className="hover:bg-accent hover:text-accent-foreground text-white">
                   <Eye className="mr-2 h-4 w-4" />
                   Detalhes
                 </Button>
@@ -144,6 +142,9 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
               </DialogTitle>
               <DialogDescription>
                 Detalhes do registro de {item.type === 'delivery' ? 'entrega' : 'recolhimento'}.
+                 <span className={cn('ml-2 text-xs font-bold', item.synced ? 'text-green-400' : 'text-gray-500')}>
+                  ({item.synced ? 'Salvo na nuvem' : 'Pendente de envio'})
+                </span>
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-2 py-4">
