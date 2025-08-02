@@ -103,7 +103,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
             </CardContent>
             <CardFooter className="flex justify-end gap-2 p-4">
               <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-accent hover:text-accent">
+                <Button variant="ghost" size="sm" className="hover:text-accent">
                   <Eye className="mr-2 h-4 w-4" />
                   Detalhes
                 </Button>
