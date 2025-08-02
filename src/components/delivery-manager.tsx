@@ -6,7 +6,7 @@ import type { Delivery, Collection, HistoryItem } from '@/lib/types';
 import { DeliveryForm } from './delivery-form';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList, Bot, ClipboardCopy, Loader2 } from 'lucide-react';
+import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList, Bot, ClipboardCopy, Loader2, Send } from 'lucide-react';
 import { CollectionForm } from './collection-form';
 import { cn } from '@/lib/utils';
 import { Header } from './header';
@@ -193,12 +193,14 @@ export function DeliveryManager() {
 function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, lastItem: HistoryItem }) {
     const { toast } = useToast();
     const [generatedContent, setGeneratedContent] = useState('');
+    const [telegramLink, setTelegramLink] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dialogTitle, setDialogTitle] = useState('');
 
     const handleGenerateClick = async (type: 'message' | 'summary') => {
         setIsGenerating(true);
+        setTelegramLink('');
         setDialogTitle(type === 'message' ? 'Mensagem Gerada' : 'Resumo Gerado');
 
         try {
@@ -210,6 +212,9 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
                     schoolName: lastItem.schoolName,
                 });
                 setGeneratedContent(result.message);
+                if (result.telegramLink) {
+                    setTelegramLink(result.telegramLink);
+                }
             } else {
                 const result = await createSummary({
                     type: lastItem.type,
@@ -252,10 +257,10 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
                 <p className="text-gray-400 text-center mb-4 fade-in-up" style={{animationDelay: '200ms'}}>Os detalhes foram guardados com sucesso.</p>
                 <div className="w-full space-y-3 mt-4 fade-in-up" style={{animationDelay: '300ms'}}>
                     <Button onClick={() => handleGenerateClick('message')} disabled={isGenerating} variant="outline" className="w-full bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border-sky-500/30 hover:text-sky-200">
-                         {isGenerating ? <Loader2 className="animate-spin" /> : '✨ Gerar Mensagem'}
+                         {isGenerating && dialogTitle.includes('Mensagem') ? <Loader2 className="animate-spin" /> : '✨ Gerar Mensagem (WhatsApp)'}
                     </Button>
                     <Button onClick={() => handleGenerateClick('summary')} disabled={isGenerating} variant="outline" className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border-purple-500/30 hover:text-purple-200">
-                        {isGenerating ? <Loader2 className="animate-spin" /> : '✨ Criar Resumo'}
+                        {isGenerating && dialogTitle.includes('Resumo') ? <Loader2 className="animate-spin" /> : '✨ Criar Resumo'}
                     </Button>
                 </div>
                 <Button onClick={onNewRecord} className="mt-6 bg-slate-700 hover:bg-slate-600 text-white font-bold fade-in-up" style={{animationDelay: '400ms'}}>
@@ -277,6 +282,11 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
                         {generatedContent}
                     </div>
                     <AlertDialogFooter>
+                        {telegramLink && (
+                            <Button variant="outline" className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border-blue-500/30" onClick={() => window.open(telegramLink, '_blank')}>
+                                <Send className="mr-2"/> Enviar via Telegram
+                            </Button>
+                        )}
                         <AlertDialogCancel>Fechar</AlertDialogCancel>
                         <AlertDialogAction onClick={handleCopyToClipboard}>
                             <ClipboardCopy className="mr-2" /> Copiar

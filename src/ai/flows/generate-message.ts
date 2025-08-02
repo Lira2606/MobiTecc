@@ -20,7 +20,8 @@ const GenerateMessageInputSchema = z.object({
 export type GenerateMessageInput = z.infer<typeof GenerateMessageInputSchema>;
 
 const GenerateMessageOutputSchema = z.object({
-  message: z.string().describe('A friendly message for the responsible person.'),
+  message: z.string().describe('A friendly message for the responsible person, suitable for WhatsApp.'),
+  telegramLink: z.string().optional().describe('A pre-filled Telegram share link.'),
 });
 export type GenerateMessageOutput = z.infer<typeof GenerateMessageOutputSchema>;
 
@@ -32,7 +33,7 @@ const prompt = ai.definePrompt({
   name: 'generateMessagePrompt',
   input: {schema: GenerateMessageInputSchema},
   output: {schema: GenerateMessageOutputSchema},
-  prompt: `You are a helpful assistant. Create a friendly and professional WhatsApp message in Brazilian Portuguese.
+  prompt: `You are a helpful assistant. Create a friendly and professional message in Brazilian Portuguese.
 The message is for {{responsibleParty}} to confirm a registration.
 
 The registration type is '{{type}}'.
@@ -45,6 +46,9 @@ The location is the school '{{schoolName}}'.
 The message should be polite and clear. Start with a greeting.
 Example for delivery: "Olá, {{responsibleParty}}! Confirmando que o item '{{item}}' foi entregue com sucesso na escola {{schoolName}}. Agradecemos a colaboração!"
 Example for collection: "Olá, {{responsibleParty}}! Passando para confirmar que o item '{{item}}' foi recolhido com sucesso na escola {{schoolName}}. Obrigado!"
+
+Based on the generated message, also create a Telegram share URL. The URL should be in the format 'https://t.me/share/url?url=&text=<ENCODED_MESSAGE>'.
+URL-encode the message text for the telegramLink field.
 `,
 });
 
