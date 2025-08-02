@@ -33,8 +33,8 @@ export function CollectionList({ collections }: CollectionListProps) {
     <div className="space-y-4">
       <Accordion type="single" collapsible className="w-full space-y-4">
         {collections.map(collection => (
-          <AccordionItem value={collection.id} key={collection.id} className="border rounded-lg bg-card">
-            <Card className="shadow-none border-none">
+          <AccordionItem value={collection.id} key={collection.id} className="border-none">
+            <Card className="shadow-none border-none rounded-lg overflow-hidden">
               <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-secondary/50 rounded-t-lg">
                 <div className="flex justify-between items-center w-full">
                   <div className="text-left">

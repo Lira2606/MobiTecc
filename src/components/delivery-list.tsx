@@ -32,8 +32,8 @@ export function DeliveryList({ deliveries }: DeliveryListProps) {
     <div className="space-y-4">
       <Accordion type="single" collapsible className="w-full space-y-4">
         {deliveries.map(delivery => (
-          <AccordionItem value={delivery.id} key={delivery.id} className="border rounded-lg bg-card">
-            <Card className="shadow-none border-none">
+          <AccordionItem value={delivery.id} key={delivery.id} className="border-none">
+            <Card className="shadow-none border-none rounded-lg overflow-hidden">
               <AccordionTrigger className="p-6 hover:no-underline data-[state=open]:bg-secondary/50 rounded-t-lg">
                 <div className="flex justify-between items-center w-full">
                   <div className="text-left">
