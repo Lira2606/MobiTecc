@@ -163,7 +163,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
               )}
             </div>
              <DialogClose asChild>
-                <Button type="button" variant="secondary">
+                <Button type="button" variant="secondary" className="transition-transform transform hover:scale-105">
                   Fechar
                 </Button>
             </DialogClose>
