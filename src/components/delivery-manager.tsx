@@ -42,6 +42,16 @@ export function DeliveryManager() {
     setShowSuccess(true);
   };
 
+  const handleDeleteDelivery = (id: string) => {
+    setDeliveries(prev => prev.filter(d => d.id !== id));
+    toast({ title: "Entrega excluída com sucesso!" });
+  };
+
+  const handleDeleteCollection = (id: string) => {
+    setCollections(prev => prev.filter(c => c.id !== id));
+    toast({ title: "Recolhimento excluído com sucesso!" });
+  };
+
   const allSchoolNames = useMemo(() => {
     const deliverySchools = deliveries.map(d => d.schoolName);
     const collectionSchools = collections.map(c => c.schoolName);
@@ -67,7 +77,7 @@ export function DeliveryManager() {
       case 'shipments':
         return <div className="text-white text-center mt-10">Envios - Em breve</div>;
       case 'history':
-        return <HistoryList deliveries={deliveries} collections={collections} />;
+        return <HistoryList deliveries={deliveries} collections={collections} onDeleteDelivery={handleDeleteDelivery} onDeleteCollection={handleDeleteCollection} />;
       default:
         return null;
     }
