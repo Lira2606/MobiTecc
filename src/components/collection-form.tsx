@@ -42,6 +42,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoDataUri, setPhotoDataUri] = useState<string | null>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
 
@@ -64,7 +65,9 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
       }
     };
 
-    getCameraPermission();
+    if (showCamera) {
+      getCameraPermission();
+    }
     
     return () => {
       if (videoRef.current && videoRef.current.srcObject) {
@@ -72,7 +75,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
         stream.getTracks().forEach(track => track.stop());
       }
     };
-  }, []);
+  }, [showCamera]);
 
 
   const form = useForm<CollectionFormValues>({
@@ -98,6 +101,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
         const dataUri = canvas.toDataURL('image/jpeg');
         setPhotoDataUri(dataUri);
         form.setValue('photoDataUri', dataUri);
+        setShowCamera(false);
       }
     }
   };
@@ -108,6 +112,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
     onSubmit(data);
     form.reset();
     setPhotoDataUri(null);
+    setShowCamera(false);
     setTimeout(() => setIsSubmitting(false), 1000);
   };
   
@@ -185,7 +190,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
             <FormItem>
               <FormLabel>Foto</FormLabel>
               <div className="space-y-4">
-                 {hasCameraPermission === false && (
+                 {hasCameraPermission === false && showCamera && (
                     <Alert variant="destructive">
                       <AlertTitle>Câmera não disponível</AlertTitle>
                       <AlertDescription>
@@ -201,16 +206,27 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                     </Button>
                   </div>
                 ) : (
-                  hasCameraPermission && (
+                  <>
+                  {showCamera ? (
                      <>
                       <div className="w-full bg-muted rounded-md overflow-hidden aspect-video relative">
                           <video ref={videoRef} className="w-full h-full object-cover" autoPlay muted playsInline />
                       </div>
-                      <Button type="button" onClick={handleCapture} className="w-full md:w-auto">
-                        <Camera className="mr-2" /> Capturar Foto
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button type="button" onClick={handleCapture} className="w-full md:w-auto">
+                          <Camera className="mr-2" /> Capturar Foto
+                        </Button>
+                        <Button type="button" variant="outline" onClick={() => setShowCamera(false)} className="w-full md:w-auto">
+                           Cancelar
+                        </Button>
+                      </div>
                     </>
-                  )
+                  ) : (
+                     <Button type="button" onClick={() => setShowCamera(true)} className="w-full md:w-auto">
+                        <Camera className="mr-2" /> Tirar Foto
+                      </Button>
+                  )}
+                  </>
                 )}
               </div>
             </FormItem>
