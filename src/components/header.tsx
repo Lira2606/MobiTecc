@@ -14,7 +14,7 @@ export function Header() {
   }, []);
 
   return (
-    <header className="absolute top-0 left-0 w-full z-20">
+    <header className="relative w-full z-20">
       <div className="px-6 pt-3 flex justify-between items-center">
           <span className="text-white font-semibold text-sm">{time}</span>
           <div className="flex items-center space-x-1">

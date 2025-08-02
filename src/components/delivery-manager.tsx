@@ -93,7 +93,7 @@ export function DeliveryManager() {
   return (
     <div className="flex flex-col flex-grow h-full">
         <Header />
-        <main className="flex-grow p-6 pt-24 overflow-y-auto transition-all duration-500">
+        <main className="flex-grow p-6 overflow-y-auto transition-all duration-500">
             {renderContent()}
         </main>
         
