@@ -8,15 +8,16 @@ import { DeliveryForm } from './delivery-form';
 import { DeliveryList } from './delivery-list';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { CloudUpload, Truck, PackageOpen } from 'lucide-react';
+import { CloudUpload, Truck, PackageOpen, Plane, Users } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CollectionForm } from './collection-form';
 import { CollectionList } from './collection-list';
 import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
 
 export function DeliveryManager() {
-  const [activeTab, setActiveTab] = useState<'deliveries' | 'collections'>('deliveries');
+  const [activeTab, setActiveTab] = useState<'deliveries' | 'collections' | 'visits' | 'shipments'>('deliveries');
   const [deliveries, setDeliveries] = useLocalStorage<Delivery[]>('deliveries', []);
   const [collections, setCollections] = useLocalStorage<Collection[]>('collections', []);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -110,11 +111,13 @@ export function DeliveryManager() {
 
   return (
     <div className="pb-24 md:pb-0">
-        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'deliveries' | 'collections')} className="space-y-8">
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as 'deliveries' | 'collections' | 'visits' | 'shipments')} className="space-y-8">
         <div className="hidden md:flex justify-center">
             <TabsList className="hidden">
             <TabsTrigger value="deliveries">Entregas</TabsTrigger>
             <TabsTrigger value="collections">Recolhimentos</TabsTrigger>
+            <TabsTrigger value="visits">Visitas</TabsTrigger>
+            <TabsTrigger value="shipments">Envios</TabsTrigger>
             </TabsList>
         </div>
 
@@ -137,6 +140,29 @@ export function DeliveryManager() {
             <CollectionList collections={collections} />
             </div>
         </TabsContent>
+        
+        <TabsContent value="visits" className="space-y-8 mt-0">
+          <Card>
+            <CardHeader>
+              <CardTitle>Visitas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Gerencie suas visitas aqui.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="shipments" className="space-y-8 mt-0">
+          <Card>
+            <CardHeader>
+              <CardTitle>Envios</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Gerencie seus envios aqui.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         </Tabs>
 
 
@@ -171,6 +197,26 @@ export function DeliveryManager() {
                 >
                     <PackageOpen className="h-6 w-6 mb-1" />
                     <span>Recolhimentos</span>
+                </button>
+                 <button
+                    onClick={() => setActiveTab('visits')}
+                    className={cn(
+                        "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
+                        activeTab === 'visits' ? 'text-primary' : 'text-muted-foreground'
+                    )}
+                >
+                    <Users className="h-6 w-6 mb-1" />
+                    <span>Visitas</span>
+                </button>
+                 <button
+                    onClick={() => setActiveTab('shipments')}
+                    className={cn(
+                        "flex flex-col items-center justify-center w-full h-full text-sm font-medium transition-colors",
+                        activeTab === 'shipments' ? 'text-primary' : 'text-muted-foreground'
+                    )}
+                >
+                    <Plane className="h-6 w-6 mb-1" />
+                    <span>Envios</span>
                 </button>
             </div>
         </div>
