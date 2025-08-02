@@ -257,7 +257,7 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
                 <p className="text-gray-400 text-center mb-4 fade-in-up" style={{animationDelay: '200ms'}}>Os detalhes foram guardados com sucesso.</p>
                 <div className="w-full space-y-3 mt-4 fade-in-up" style={{animationDelay: '300ms'}}>
                     <Button onClick={() => handleGenerateClick('message')} disabled={isGenerating} variant="outline" className="w-full bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border-sky-500/30 hover:text-sky-200">
-                         {isGenerating && dialogTitle.includes('Mensagem') ? <Loader2 className="animate-spin" /> : '✨ Gerar Mensagem (WhatsApp)'}
+                         {isGenerating && dialogTitle.includes('Mensagem') ? <Loader2 className="animate-spin" /> : '✨ Gerar Mensagem'}
                     </Button>
                     <Button onClick={() => handleGenerateClick('summary')} disabled={isGenerating} variant="outline" className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border-purple-500/30 hover:text-purple-200">
                         {isGenerating && dialogTitle.includes('Resumo') ? <Loader2 className="animate-spin" /> : '✨ Criar Resumo'}
@@ -286,9 +286,11 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
                             <ClipboardCopy className="mr-2" /> Copiar
                         </AlertDialogAction>
                         {telegramLink && (
-                            <Button variant="outline" className="bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border-blue-500/30" onClick={() => window.open(telegramLink, '_blank')}>
-                                <Send className="mr-2"/> Enviar via Telegram
-                            </Button>
+                            <AlertDialogAction asChild>
+                               <a href={telegramLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border-blue-500/30">
+                                    <Send className="mr-2"/> Enviar via Telegram
+                                </a>
+                            </AlertDialogAction>
                         )}
                         <AlertDialogCancel>Fechar</AlertDialogCancel>
                     </AlertDialogFooter>
