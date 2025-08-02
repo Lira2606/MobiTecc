@@ -6,14 +6,14 @@ import type { Delivery, Collection } from '@/lib/types';
 import { DeliveryForm } from './delivery-form';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Truck, PackageOpen, Users, Plane, CheckCircle2 } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList } from 'lucide-react';
 import { CollectionForm } from './collection-form';
 import { cn } from '@/lib/utils';
 import { Header } from './header';
+import { HistoryList } from './history-list';
 
 export function DeliveryManager() {
-  const [activeTab, setActiveTab] = useState<'deliveries' | 'collections' | 'visits' | 'shipments'>('deliveries');
+  const [activeTab, setActiveTab] = useState<'deliveries' | 'collections' | 'visits' | 'shipments' | 'history'>('deliveries');
   const [deliveries, setDeliveries] = useLocalStorage<Delivery[]>('deliveries', []);
   const [collections, setCollections] = useLocalStorage<Collection[]>('collections', []);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -66,14 +66,17 @@ export function DeliveryManager() {
         return <div className="text-white text-center mt-10">Visitas - Em breve</div>;
       case 'shipments':
         return <div className="text-white text-center mt-10">Envios - Em breve</div>;
+      case 'history':
+        return <HistoryList deliveries={deliveries} collections={collections} />;
       default:
         return null;
     }
   }
 
-  const getButtonClass = (tabName: 'deliveries' | 'collections' | 'visits' | 'shipments') => {
+  const getButtonClass = (tabName: 'deliveries' | 'collections' | 'visits' | 'shipments' | 'history') => {
     return cn(
-      "flex flex-col items-center transition-transform duration-200 nav-link text-white"
+      "flex flex-col items-center transition-transform duration-200 nav-link",
+       activeTab === tabName ? 'text-green-400' : 'text-white'
     );
   };
 
@@ -92,6 +95,10 @@ export function DeliveryManager() {
             <button onClick={() => { setActiveTab('collections'); setShowSuccess(false); }} className={getButtonClass('collections')}>
                 <PackageOpen className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Recolhimentos</span>
+            </button>
+             <button onClick={() => { setActiveTab('history'); setShowSuccess(false); }} className={getButtonClass('history')}>
+                <ClipboardList className="w-7 h-7 mb-1" />
+                <span className="text-xs font-medium">Registros</span>
             </button>
             <button onClick={() => { setActiveTab('visits'); setShowSuccess(false); }} className={getButtonClass('visits')}>
                 <Users className="w-7 h-7 mb-1" />
