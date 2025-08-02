@@ -103,7 +103,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
             </CardContent>
             <CardFooter className="flex justify-end gap-2 p-4">
               <DialogTrigger asChild>
-                <Button variant="ghost" size="sm" className="hover:text-accent">
+                <Button variant="ghost" size="sm" className="hover:text-accent-foreground text-white">
                   <Eye className="mr-2 h-4 w-4" />
                   Detalhes
                 </Button>
@@ -168,7 +168,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
               )}
             </div>
              <DialogClose asChild>
-                <Button type="button" variant="outline" className="w-full transition-transform transform hover:scale-105 bg-accent/90 hover:bg-accent text-accent-foreground border-accent">
+                <Button type="button" variant="outline" className="w-full transition-transform transform hover:scale-105 bg-accent hover:bg-accent/90 text-accent-foreground border-accent">
                   Fechar
                 </Button>
             </DialogClose>
