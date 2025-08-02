@@ -15,12 +15,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { suggestSchool } from '@/ai/flows/suggest-school';
-import { useState, useMemo, useEffect, useCallback } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
-import { cn } from '@/lib/utils';
-import { Check, ChevronsUpDown, Loader2 } from 'lucide-react';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './ui/command';
+import { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 
 
 const formSchema = z.object({
@@ -38,11 +34,8 @@ interface CollectionFormProps {
   allSchoolNames: string[];
 }
 
-export function CollectionForm({ onSubmit, allSchoolNames }: CollectionFormProps) {
+export function CollectionForm({ onSubmit }: CollectionFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
-  const [popoverOpen, setPopoverOpen] = useState(false);
 
   const form = useForm<CollectionFormValues>({
     resolver: zodResolver(formSchema),
@@ -54,41 +47,6 @@ export function CollectionForm({ onSubmit, allSchoolNames }: CollectionFormProps
       observations: '',
     },
   });
-
-  const previousSchoolNames = useMemo(() => {
-    return [...new Set(allSchoolNames)];
-  }, [allSchoolNames]);
-
-  const schoolNameValue = form.watch('schoolName');
-
-  const fetchSuggestions = useCallback(async (query: string) => {
-    if (query.length < 2) {
-      setSuggestions([]);
-      return;
-    }
-    setIsLoadingSuggestions(true);
-    try {
-      const result = await suggestSchool({
-        partialSchoolName: query,
-        previousSchoolNames: previousSchoolNames,
-      });
-      setSuggestions(result.suggestedSchoolNames);
-    } catch (error) {
-      console.error('Error fetching school suggestions:', error);
-      setSuggestions([]);
-    } finally {
-      setIsLoadingSuggestions(false);
-    }
-  }, [previousSchoolNames]);
-
-
-  useEffect(() => {
-    const debounce = setTimeout(() => {
-      fetchSuggestions(schoolNameValue);
-    }, 300);
-    return () => clearTimeout(debounce);
-  }, [schoolNameValue, fetchSuggestions]);
-
 
   const handleSubmit = (data: CollectionFormValues) => {
     setIsSubmitting(true);
@@ -111,62 +69,9 @@ export function CollectionForm({ onSubmit, allSchoolNames }: CollectionFormProps
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nome da Escola</FormLabel>
-                    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            role="combobox"
-                            className={cn(
-                              "w-full justify-between",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value
-                              ? previousSchoolNames.find(
-                                  (name) => name === field.value
-                                )
-                              : "Selecione ou digite o nome da escola"}
-                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                         <Command shouldFilter={false}>
-                          <CommandInput 
-                            placeholder="Buscar escola..."
-                            value={field.value}
-                            onValueChange={(search) => {
-                              form.setValue("schoolName", search)
-                            }}
-                          />
-                          <CommandList>
-                            {isLoadingSuggestions && <div className="p-2 text-center text-sm">Carregando...</div>}
-                            <CommandEmpty>Nenhuma escola encontrada.</CommandEmpty>
-                            <CommandGroup>
-                              {[...new Set([...suggestions, ...previousSchoolNames])].map((name) => (
-                                <CommandItem
-                                  value={name}
-                                  key={name}
-                                  onSelect={() => {
-                                    form.setValue("schoolName", name)
-                                    setPopoverOpen(false)
-                                  }}
-                                >
-                                  <Check
-                                    className={cn(
-                                      "mr-2 h-4 w-4",
-                                      name === field.value ? "opacity-100" : "opacity-0"
-                                    )}
-                                  />
-                                  {name}
-                                </CommandItem>
-                              ))}
-                            </CommandGroup>
-                          </CommandList>
-                        </Command>
-                      </PopoverContent>
-                    </Popover>
+                    <FormControl>
+                      <Input placeholder="Digite o nome da escola" {...field} />
+                    </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

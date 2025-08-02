@@ -41,8 +41,9 @@ const prompt = ai.definePrompt({
   Given the following partial school name: {{{partialSchoolName}}}
   And the following list of previously entered school names: {{#each previousSchoolNames}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
 
-  Suggest school names that are similar to the partial school name and are in the list of previously entered school names.
+  Suggest up to 5 school names that start with the partial school name and are in the list of previously entered school names.
   Return only the names of the suggested schools.
+  If no names match, return an empty list.
   `,
 });
 
