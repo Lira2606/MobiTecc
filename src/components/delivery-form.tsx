@@ -168,13 +168,13 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
                   />
                 </FormControl>
                 {photoPreview ? (
-                  <div className="relative group">
+                  <div className="relative group mx-auto w-fit">
                     <Image
                       src={photoPreview}
                       alt="Pré-visualização"
-                      width={400}
+                      width={200}
                       height={200}
-                      className="w-full h-auto rounded-lg object-cover"
+                      className="max-h-48 w-auto rounded-lg object-cover"
                     />
                     <button
                       type="button"
