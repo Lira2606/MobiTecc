@@ -4,34 +4,25 @@
 
 @layer base {
   :root {
-    --background: 224 71% 4%; /* #08090c */
-    --foreground: 215 28% 93%; /* #e9eaf0 */
-    
+    --background: 204 10% 4%;
+    --foreground: 210 40% 98%;
     --card: 222 47% 11%;
     --card-foreground: 210 40% 98%;
-
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-    
-    --primary: 163 72% 46%; /* #14b8a6 - teal-500 */
-    --primary-foreground: 210 20% 98%;
-
-    --secondary: 220 14.3% 95.9%;
-    --secondary-foreground: 220.9 39.3% 11%;
-
-    --muted: 222 47% 11%; /* bg-slate-800 */
-    --muted-foreground: 220 8.9% 46.1%;
-    
-    --accent: 217 33% 17%;
+    --primary: 204 100% 50%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 163 72% 46%;
     --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-
-    --border: 215 28% 17%; /* #242e42 - slate-800 */
-    --input: 220 13% 21%; /* #303640 */
-    --ring: 163 72% 46%;
-
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 204 100% 50%;
     --radius: 0.75rem;
   }
 }
@@ -42,9 +33,19 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-sans), sans-serif;
+    font-family: 'Poppins', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Corrige o fundo branco no autopreenchimento do navegador */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px hsl(var(--muted)) inset !important;
+    -webkit-text-fill-color: hsl(var(--foreground)) !important;
+    caret-color: hsl(var(--foreground));
   }
 }
 
@@ -63,7 +64,7 @@
     background: #111827;
     --gradient-x: 50%;
     --gradient-y: 50%;
-    background-image: radial-gradient(circle at var(--gradient-x) var(--gradient-y), rgba(20, 184, 166, 0.15), transparent 40%);
+    background-image: radial-gradient(circle at var(--gradient-x) var(--gradient-y), rgba(0, 128, 255, 0.15), transparent 40%);
   }
   .glassmorphism {
       background-color: rgba(30, 41, 59, 0.7); 
@@ -73,7 +74,6 @@
   }
 }
 
-
 @layer utilities {
     .fade-in-up { 
         animation: fadeInUp 0.5s ease-out forwards;
@@ -82,7 +82,7 @@
     
     .nav-link:hover {
       transform: scale(1.1);
-      color: hsl(var(--primary));
+      color: hsl(var(--accent));
     }
 
     @keyframes gradientBG { 
