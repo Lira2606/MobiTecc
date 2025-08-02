@@ -79,19 +79,19 @@ export function DeliveryManager() {
         </main>
         
         <nav className="glassmorphism flex justify-around items-center p-3 mt-auto w-full z-10">
-            <button onClick={() => { setActiveTab('deliveries'); setShowSuccess(false); }} className={cn("flex flex-col items-center transition-transform duration-200 nav-link", activeTab === 'deliveries' && !showSuccess ? 'text-teal-400' : 'text-gray-400' )}>
+            <button onClick={() => { setActiveTab('deliveries'); setShowSuccess(false); }} className={cn("flex flex-col items-center transition-transform duration-200 nav-link", activeTab === 'deliveries' && !showSuccess ? 'text-teal-400' : 'text-white' )}>
                 <Truck className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Entregas</span>
             </button>
-            <button onClick={() => { setActiveTab('collections'); setShowSuccess(false); }} className={cn("flex flex-col items-center transition-transform duration-200 nav-link", activeTab === 'collections' && !showSuccess ? 'text-teal-400' : 'text-gray-400' )}>
+            <button onClick={() => { setActiveTab('collections'); setShowSuccess(false); }} className={cn("flex flex-col items-center transition-transform duration-200 nav-link", activeTab === 'collections' && !showSuccess ? 'text-teal-400' : 'text-white' )}>
                 <PackageOpen className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Recolhimentos</span>
             </button>
-            <button onClick={() => { setActiveTab('visits'); setShowSuccess(false); }} className={cn("flex flex-col items-center transition-transform duration-200 nav-link", activeTab === 'visits' && !showSuccess ? 'text-teal-400' : 'text-gray-400' )}>
+            <button onClick={() => { setActiveTab('visits'); setShowSuccess(false); }} className={cn("flex flex-col items-center transition-transform duration-200 nav-link", activeTab === 'visits' && !showSuccess ? 'text-teal-400' : 'text-white' )}>
                 <Users className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Visitas</span>
             </button>
-            <button onClick={() => { setActiveTab('shipments'); setShowSuccess(false); }} className={cn("flex flex-col items-center transition-transform duration-200 nav-link", activeTab === 'shipments' && !showSuccess ? 'text-teal-400' : 'text-gray-400' )}>
+            <button onClick={() => { setActiveTab('shipments'); setShowSuccess(false); }} className={cn("flex flex-col items-center transition-transform duration-200 nav-link", activeTab === 'shipments' && !showSuccess ? 'text-teal-400' : 'text-white' )}>
                 <Plane className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Envios</span>
             </button>

@@ -82,7 +82,7 @@
     
     .nav-link:hover {
       transform: scale(1.1);
-      color: white;
+      color: hsl(var(--primary));
     }
 
     @keyframes gradientBG { 
