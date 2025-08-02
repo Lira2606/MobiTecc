@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState, useRef, useEffect } from 'react';
-import { Loader2, Camera, Trash2 } from 'lucide-react';
+import { Loader2, Camera, Trash2, Upload } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
@@ -44,6 +44,7 @@ export function DeliveryForm({ onSubmit }: DeliveryFormProps) {
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const [showCamera, setShowCamera] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -103,6 +104,19 @@ export function DeliveryForm({ onSubmit }: DeliveryFormProps) {
     }
   };
 
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUri = e.target?.result as string;
+        setPhotoDataUri(dataUri);
+        form.setValue('photoDataUri', dataUri);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = (data: DeliveryFormValues) => {
     setIsSubmitting(true);
     onSubmit(data);
@@ -115,6 +129,9 @@ export function DeliveryForm({ onSubmit }: DeliveryFormProps) {
   const handleClearPhoto = () => {
     setPhotoDataUri(null);
     form.setValue('photoDataUri', undefined);
+    if(fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   }
 
   return (
@@ -185,6 +202,13 @@ export function DeliveryForm({ onSubmit }: DeliveryFormProps) {
             
             <FormItem>
               <FormLabel>Foto</FormLabel>
+              <input 
+                  type="file" 
+                  accept="image/*" 
+                  ref={fileInputRef} 
+                  onChange={handleFileSelect} 
+                  className="hidden"
+                />
               <div className="space-y-4">
                  {hasCameraPermission === false && showCamera && (
                     <Alert variant="destructive">
@@ -218,9 +242,14 @@ export function DeliveryForm({ onSubmit }: DeliveryFormProps) {
                       </div>
                     </>
                   ) : (
-                    <Button type="button" onClick={() => setShowCamera(true)} className="w-full md:w-auto">
-                        <Camera className="mr-2" /> Tirar Foto
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      <Button type="button" onClick={() => setShowCamera(true)} className="w-full sm:w-auto">
+                          <Camera className="mr-2" /> Tirar Foto
+                      </Button>
+                      <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full sm:w-auto">
+                        <Upload className="mr-2" /> Selecionar Arquivo
+                      </Button>
+                    </div>
                   )}
                   </>
                 )}
