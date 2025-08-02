@@ -273,25 +273,25 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                     <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#334155] rounded-lg text-gray-400 hover:bg-[#1e293b] hover:border-teal-500 transition-all"
+                        className="w-full flex flex-col items-center justify-center p-4 border-2 border-dashed border-primary/20 rounded-lg text-primary hover:bg-primary/10 transition-all"
                     >
-                        <Upload className="w-8 h-8 mb-2" />
-                        <span className="text-sm font-semibold">Adicionar Foto</span>
+                        <Upload className="w-7 h-7 mb-1" />
+                        <span className="text-xs font-semibold">Adicionar Foto</span>
                     </button>
                     <button
                         type="button"
                         onClick={() => setIsTakingPhoto(true)}
-                        className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-[#334155] rounded-lg text-gray-400 hover:bg-[#1e293b] hover:border-teal-500 transition-all"
+                        className="w-full flex flex-col items-center justify-center p-4 border-2 border-dashed border-primary/20 rounded-lg text-primary hover:bg-primary/10 transition-all"
                     >
-                        <Camera className="w-8 h-8 mb-2" />
-                        <span className="text-sm font-semibold">Tirar Foto</span>
+                        <Camera className="w-7 h-7 mb-1" />
+                        <span className="text-xs font-semibold">Tirar Foto</span>
                     </button>
                   </div>
                 )}
             </div>
 
           <div className="pt-4 fade-in-up" style={{ animationDelay: '800ms' }}>
-            <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white font-bold py-3 h-auto px-4 rounded-lg shadow-lg hover:shadow-teal-500/50 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center text-base">
+            <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-primary to-green-500 hover:from-primary/90 hover:to-green-500/90 text-white font-bold py-3 h-auto px-4 rounded-lg shadow-lg hover:shadow-primary/50 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center text-base">
               {isSubmitting ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
@@ -314,13 +314,13 @@ function FloatingLabelInput({ id, label, type = 'text', icon, ...props }: { id: 
         <input 
             id={id}
             type={type}
-            className="form-input w-full p-4 pl-12 bg-[#1e293b] border border-[#334155] text-white rounded-lg transition-all duration-200 ease-in-out focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/30 peer h-14"
+            className="form-input w-full p-4 pl-12 bg-slate-800 border border-slate-700 text-white rounded-lg transition-all duration-200 ease-in-out focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/30 peer h-14 shadow-inner"
             placeholder=" " 
             {...props}
         />
         <label 
             htmlFor={id} 
-            className="form-label absolute left-12 top-4 text-gray-400 pointer-events-none transition-all duration-200 ease-in-out peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-teal-400 peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-teal-400"
+            className="form-label absolute left-12 top-4 text-gray-400 pointer-events-none transition-all duration-200 ease-in-out peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-focus:top-1.5 peer-focus:text-xs peer-focus:text-primary peer-[:not(:placeholder-shown)]:top-1.5 peer-[:not(:placeholder-shown)]:text-xs peer-[:not(:placeholder-shown)]:text-primary"
         >
             {label}
         </label>
