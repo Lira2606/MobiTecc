@@ -25,7 +25,6 @@ import { Loader2, Home, User, Briefcase, Phone, Camera, X, Upload, Check, Camera
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-import { Header } from './header';
 
 const formSchema = z.object({
   schoolName: z.string().min(2, { message: 'O nome da escola é obrigatório.' }),
@@ -159,8 +158,7 @@ export function DeliveryForm({ onSubmit, allSchoolNames }: DeliveryFormProps) {
 
   return (
     <>
-      <Header />
-      <div className="p-6 overflow-y-auto">
+      <div>
         <h2 className="text-3xl font-bold text-white fade-in-up" style={{ animationDelay: '100ms' }}>
           Nova Entrega
         </h2>
