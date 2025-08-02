@@ -82,7 +82,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
             </CardHeader>
             <CardContent className="flex-grow">
               <p className="text-sm text-slate-300">
-                <span className="font-semibold">Responsável:</span> {item.responsibleParty} ({item.role})
+                <span className="font-semibold">Responsável:</span> {item.responsibleParty}
               </p>
               {item.type === 'delivery' && item.department && (
                  <p className="text-sm text-slate-300">
@@ -145,7 +145,8 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
             </DialogHeader>
             <div className="space-y-2 py-4">
               <p><span className="font-semibold">Data:</span> {new Date(item.createdAt).toLocaleString('pt-BR')}</p>
-              <p><span className="font-semibold">Responsável:</span> {item.responsibleParty} ({item.role})</p>
+              <p><span className="font-semibold">Responsável:</span> {item.responsibleParty}</p>
+              <p><span className="font-semibold">Função:</span> {item.role}</p>
               {item.type === 'delivery' && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}
               <p><span className="font-semibold">Telefone:</span> {item.phoneNumber}</p>
               {item.observations && <p><span className="font-semibold">Observações:</span> {item.observations}</p>}
