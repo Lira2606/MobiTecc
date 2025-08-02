@@ -39,7 +39,7 @@ export function Header({ unsyncedCount, onSync, isOnline }: HeaderProps) {
       </div>
       <div className="bg-transparent text-white p-6 pb-2 flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <svg className="w-8 h-8 text-teal-400" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg className="w-8 h-8 text-teal-400 header-logo" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <rect x="12" y="12" width="40" height="40" rx="4" stroke="currentColor" strokeWidth="3"/>
                 <path d="M26 12V4" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
                 <path d="M38 12V4" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
