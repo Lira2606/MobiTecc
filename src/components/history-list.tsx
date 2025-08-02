@@ -82,6 +82,9 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
             </CardHeader>
             <CardContent className="flex-grow">
               <p className="text-sm text-slate-300">
+                <span className="font-semibold">Item:</span> {item.item}
+              </p>
+              <p className="text-sm text-slate-300">
                 <span className="font-semibold">Responsável:</span> {item.responsibleParty}
               </p>
               {item.department && (
@@ -100,7 +103,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
             </CardContent>
             <CardFooter className="flex justify-end gap-2 p-4">
               <DialogTrigger asChild>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" className="text-accent hover:text-accent">
                   <Eye className="mr-2 h-4 w-4" />
                   Detalhes
                 </Button>
@@ -145,6 +148,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
             </DialogHeader>
             <div className="space-y-2 py-4">
               <p><span className="font-semibold">Data:</span> {new Date(item.createdAt).toLocaleString('pt-BR')}</p>
+              <p><span className="font-semibold">Item:</span> {item.item}</p>
               <p><span className="font-semibold">Responsável:</span> {item.responsibleParty}</p>
               <p><span className="font-semibold">Função:</span> {item.role}</p>
               {item.department && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}

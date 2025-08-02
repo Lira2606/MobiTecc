@@ -9,11 +9,19 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Input } from '@/components/ui/input';
 import { useState, useRef, useEffect } from 'react';
-import { Loader2, Home, User, Briefcase, Phone, Camera, X, Upload, Check, CameraOff, Building } from 'lucide-react';
+import { Loader2, Home, User, Briefcase, Phone, Camera, X, Upload, Check, CameraOff, Building, Package } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -21,6 +29,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 const formSchema = z.object({
   schoolName: z.string().min(2, { message: 'O nome da escola é obrigatório.' }),
   department: z.string().optional(),
+  item: z.string({ required_error: 'Selecione um item.' }),
   responsibleParty: z.string().min(2, { message: 'O nome do responsável é obrigatório.' }),
   role: z.string().min(2, { message: 'A função é obrigatória.' }),
   phoneNumber: z.string().min(10, { message: 'O número de telefone é obrigatório.' }),
@@ -29,6 +38,14 @@ const formSchema = z.object({
 });
 
 type CollectionFormValues = z.infer<typeof formSchema>;
+
+const itemOptions = [
+    { value: 'notebook', label: 'Notebook' },
+    { value: 'desktop', label: 'Desktop' },
+    { value: 'midiabox', label: 'Midiabox' },
+    { value: 'mobiface', label: 'Mobiface' },
+    { value: 'mobibox', label: 'Mobibox' },
+];
 
 interface CollectionFormProps {
   onSubmit: (data: CollectionFormValues) => void;
@@ -181,9 +198,35 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
             />
             <FormField
               control={form.control}
-              name="responsibleParty"
+              name="item"
               render={({ field }) => (
                 <FormItem className="fade-in-up" style={{ animationDelay: '500ms' }}>
+                  <FormControl>
+                    <div className="relative">
+                      <Package className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger className="pl-12 h-14 bg-slate-800 border-slate-700">
+                          <SelectValue placeholder="Selecione o item" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-slate-800 border-slate-700 text-white">
+                          {itemOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </FormControl>
+                  <FormMessage className="text-red-400" />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="responsibleParty"
+              render={({ field }) => (
+                <FormItem className="fade-in-up" style={{ animationDelay: '600ms' }}>
                   <FormControl>
                     <div className="relative">
                       <User className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -198,7 +241,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
               control={form.control}
               name="role"
               render={({ field }) => (
-                <FormItem className="fade-in-up" style={{ animationDelay: '600ms' }}>
+                <FormItem className="fade-in-up" style={{ animationDelay: '700ms' }}>
                   <FormControl>
                     <div className="relative">
                       <Briefcase className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -213,7 +256,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
               control={form.control}
               name="phoneNumber"
               render={({ field }) => (
-                <FormItem className="fade-in-up" style={{ animationDelay: '700ms' }}>
+                <FormItem className="fade-in-up" style={{ animationDelay: '800ms' }}>
                   <FormControl>
                      <div className="relative">
                       <Phone className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -225,7 +268,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
               )}
             />
 
-            <div className="fade-in-up" style={{ animationDelay: '800ms' }}>
+            <div className="fade-in-up" style={{ animationDelay: '900ms' }}>
                 <FormControl>
                   <input
                     type="file"
@@ -282,24 +325,24 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                     <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-full flex flex-col items-center justify-center p-4 border-2 border-dashed border-primary/20 rounded-lg text-primary hover:bg-primary/10 transition-all"
+                        className="w-full flex flex-col items-center justify-center p-2 border-2 border-dashed border-primary/20 rounded-lg text-primary hover:bg-primary/10 transition-all"
                     >
-                        <Upload className="w-7 h-7 mb-1" />
+                        <Upload className="w-6 h-6 mb-1" />
                         <span className="text-xs font-semibold">Adicionar Foto</span>
                     </button>
                     <button
                         type="button"
                         onClick={() => setIsTakingPhoto(true)}
-                        className="w-full flex flex-col items-center justify-center p-4 border-2 border-dashed border-primary/20 rounded-lg text-primary hover:bg-primary/10 transition-all"
+                        className="w-full flex flex-col items-center justify-center p-2 border-2 border-dashed border-primary/20 rounded-lg text-primary hover:bg-primary/10 transition-all"
                     >
-                        <Camera className="w-7 h-7 mb-1" />
+                        <Camera className="w-6 h-6 mb-1" />
                         <span className="text-xs font-semibold">Tirar Foto</span>
                     </button>
                   </div>
                 )}
             </div>
 
-          <div className="pt-4 fade-in-up" style={{ animationDelay: '900ms' }}>
+          <div className="pt-4 fade-in-up" style={{ animationDelay: '1000ms' }}>
             <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-primary to-green-500 hover:from-primary/90 hover:to-green-500/90 text-white font-bold py-3 h-auto px-4 rounded-lg shadow-lg hover:shadow-primary/50 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center text-base">
               {isSubmitting ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
