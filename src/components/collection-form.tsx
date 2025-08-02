@@ -28,7 +28,6 @@ const formSchema = z.object({
   responsibleParty: z.string().min(2, { message: 'O nome do responsável é obrigatório.' }),
   role: z.string().min(2, { message: 'A função é obrigatória.' }),
   phoneNumber: z.string().min(8, { message: 'O número de telefone é obrigatório.' }),
-  collectedItems: z.string().min(3, { message: 'Descreva os itens recolhidos.' }),
   observations: z.string().optional(),
 });
 
@@ -52,7 +51,6 @@ export function CollectionForm({ onSubmit, allSchoolNames }: CollectionFormProps
       responsibleParty: '',
       role: '',
       phoneNumber: '',
-      collectedItems: '',
       observations: '',
     },
   });
@@ -217,19 +215,6 @@ export function CollectionForm({ onSubmit, allSchoolNames }: CollectionFormProps
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name="collectedItems"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Itens Recolhidos</FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="Ex: 1 projetor com defeito, 50 provas" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="observations"

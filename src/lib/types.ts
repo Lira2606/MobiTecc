@@ -15,7 +15,6 @@ export interface Collection {
   responsibleParty: string;
   role: string;
   phoneNumber: string;
-  collectedItems: string;
   observations?: string;
   createdAt: string; // ISO string
   synced: boolean;
