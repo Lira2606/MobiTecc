@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select"
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
-import { Loader2, Home, User, Building, Package, Send, Hash, Truck as TruckIcon, Pencil } from 'lucide-react';
+import { Loader2, Home, User, Building, Package, Send, Hash, Truck as TruckIcon, Pencil, X } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,12 +50,6 @@ const shippingMethodOptions = [
     { value: 'transportadora', label: 'Transportadora' },
     { value: 'retirada_local', label: 'Retirada Local' },
     { value: 'outros', label: 'Outros' },
-];
-
-const shippingStatusOptions = [
-    { value: 'Pendente', label: 'Pendente' },
-    { value: 'Em trânsito', label: 'Em trânsito' },
-    { value: 'Entregue', label: 'Entregue' },
 ];
 
 interface ShipmentFormProps {
@@ -92,6 +86,10 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
       form.setValue('shippingMethod', otherShippingMethod.trim());
       setIsOtherMethodDialogOpen(false);
     }
+  };
+  
+  const handleClearCustomMethod = () => {
+    form.setValue('shippingMethod', '');
   };
 
   const shippingMethodValue = form.watch('shippingMethod');
@@ -186,17 +184,28 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
                             <Input
                               readOnly
                               value={field.value}
-                              className="pl-12 pr-12 h-14 bg-slate-800 border-slate-700 text-white"
+                              className="pl-12 pr-24 h-14 bg-slate-800 border-slate-700 text-white"
                             />
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 text-gray-400 hover:text-white"
-                              onClick={() => setIsOtherMethodDialogOpen(true)}
-                            >
-                              <Pencil className="w-5 h-5" />
-                            </Button>
+                            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-9 w-9 text-gray-400 hover:text-white"
+                                  onClick={() => setIsOtherMethodDialogOpen(true)}
+                                >
+                                  <Pencil className="w-4 h-4" />
+                                </Button>
+                                 <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-9 w-9 text-gray-400 hover:text-red-400"
+                                  onClick={handleClearCustomMethod}
+                                >
+                                  <X className="w-4 h-4" />
+                                </Button>
+                            </div>
                           </div>
                         ) : (
                           <div className="relative">
