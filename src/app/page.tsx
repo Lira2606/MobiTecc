@@ -12,7 +12,7 @@ export default function HomePage() {
   useEffect(() => {
     const splashTimer = setTimeout(() => {
       setIsShowingSplash(false);
-    }, 5000); // 5 second splash screen
+    }, 7000); // 7 second splash screen
 
     return () => clearTimeout(splashTimer);
   }, []);
