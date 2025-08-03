@@ -2,7 +2,6 @@
 
 import { Inter } from 'next/font/google';
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
 import { AuthProvider, useAuth } from '@/context/auth-context';
 import { SplashScreen } from '@/components/splash-screen';
 import { Toaster } from '@/components/ui/toaster';
@@ -16,19 +15,10 @@ const inter = Inter({
 });
 
 function AppContent({ children }: { children: React.ReactNode }) {
-  const { isLoading, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const pathname = usePathname();
-
-  // This logic is now handled inside the LoginForm and HomePage components
-  if (isLoading && pathname !== '/login') {
-    return (
-      <div className="bg-slate-900 flex items-center justify-center min-h-screen">
-          <SplashScreen />
-      </div>
-    )
-  }
   
-  const showShell = isAuthenticated || pathname === '/login';
+  const showShell = isAuthenticated || pathname === '/login' || pathname === '/';
 
   return (
     <div className={cn(
