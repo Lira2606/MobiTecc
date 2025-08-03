@@ -39,13 +39,10 @@ export function Header({ unsyncedCount, onSync, isOnline }: HeaderProps) {
       </div>
       <div className="bg-transparent text-white p-6 pb-2 flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <svg className="w-8 h-8 text-teal-400 glowing-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2" />
-              <path d="M3 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
-              <path d="M17 3h2a2 2 0 0 1 2 2v2" />
-              <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
-              <path d="M8 8.5v3h3" />
-              <path d="M16 15.5v-3h-3" />
+            <svg className="w-8 h-8 text-teal-400 glowing-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M8 8.5v3h3" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M16 15.5v-3h-3" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
               <h1 className="text-2xl font-bold tracking-wider">MobiTec</h1>
           </div>
