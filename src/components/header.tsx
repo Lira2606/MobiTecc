@@ -39,18 +39,8 @@ export function Header({ unsyncedCount, onSync, isOnline }: HeaderProps) {
       </div>
       <div className="bg-transparent text-white p-6 pb-2 flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <svg className="w-8 h-8 text-teal-400 header-logo" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="12" y="12" width="40" height="40" rx="4" stroke="currentColor" strokeWidth="3"/>
-                <path d="M26 12V4" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-                <path d="M38 12V4" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-                <path d="M26 52V60" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-                <path d="M38 52V60" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-                <path d="M52 26H60" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-                <path d="M52 38H60" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-                <path d="M12 26H4" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-                <path d="M12 38H4" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-                <path d="M24 24H30V30" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M40 40H34V34" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+            <svg className="w-8 h-8 text-teal-400 header-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line>
             </svg>
               <h1 className="text-2xl font-bold tracking-wider">MobiTec</h1>
           </div>
