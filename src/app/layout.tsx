@@ -1,7 +1,6 @@
 'use client';
 
 import { Inter } from 'next/font/google';
-import { usePathname } from 'next/navigation';
 import { AuthProvider, useAuth } from '@/context/auth-context';
 import { SplashScreen } from '@/components/splash-screen';
 import { Toaster } from '@/components/ui/toaster';
@@ -20,7 +19,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
   const [isShowingSplash, setIsShowingSplash] = useState(true);
 
   useEffect(() => {
-    // This timer ensures the splash screen is visible for at least 7 seconds.
+    // Este temporizador garante que a tela de splash seja visível por pelo menos 7 segundos.
     const splashTimer = setTimeout(() => {
       setIsShowingSplash(false);
     }, 7000); 
