@@ -237,8 +237,8 @@ export function HistoryList({ deliveries, collections, visits, shipments, onDele
               ) : item.type === 'shipment' ? (
                 <>
                   {item.department && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}
-                  <p><span className="font-semibold">Item:</span> {item.item}</p>
                   <p><span className="font-semibold">Remetente:</span> {item.sender}</p>
+                  <p><span className="font-semibold">Item:</span> {item.item}</p>
                   <p><span className="font-semibold">Método de Envio:</span> {item.shippingMethod}</p>
                   <p><span className="font-semibold">Status:</span> {item.shippingStatus}</p>
                   {item.trackingCode && <p><span className="font-semibold">Cód. Rastreio:</span> {item.trackingCode}</p>}
