@@ -16,48 +16,19 @@ const inter = Inter({
 });
 
 function AppContent({ children }: { children: React.ReactNode }) {
-  const screenRef = useRef<HTMLDivElement>(null);
-  const [showSplash, setShowSplash] = useState(true);
   const { isLoading, isAuthenticated } = useAuth();
   const pathname = usePathname();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2500); // Same duration as splash animation
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const screen = screenRef.current;
-    if (!screen) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const rect = screen.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      screen.style.setProperty('--gradient-x', `${(x / rect.width) * 100}%`);
-      screen.style.setProperty('--gradient-y', `${(y / rect.height) * 100}%`);
-    };
-
-    screen.addEventListener('mousemove', handleMouseMove);
-
-    return () => {
-      screen.removeEventListener('mousemove', handleMouseMove);
-    };
-  }, []);
-  
-  const showShell = isAuthenticated || pathname === '/login';
-
-  const shouldShowSplash = (isLoading || showSplash) && pathname !== '/login';
-
-  if(shouldShowSplash) {
+  // This logic is now handled inside the LoginForm and HomePage components
+  if (isLoading && pathname !== '/login') {
     return (
       <div className="bg-slate-900 flex items-center justify-center min-h-screen">
           <SplashScreen />
       </div>
     )
   }
+  
+  const showShell = isAuthenticated || pathname === '/login';
 
   return (
     <div className={cn(
@@ -68,7 +39,6 @@ function AppContent({ children }: { children: React.ReactNode }) {
          <div className="mobile-shell w-full max-w-[450px]">
           <div 
             id="mobile-screen" 
-            ref={screenRef}
             className="mobile-screen w-full rounded-3xl overflow-hidden relative flex flex-col"
           >
            {children}

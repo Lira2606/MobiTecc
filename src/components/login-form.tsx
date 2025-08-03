@@ -17,6 +17,7 @@ import { useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { SplashScreen } from './splash-screen';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Por favor, insira um email válido.' }),
@@ -27,6 +28,7 @@ type LoginFormValues = z.infer<typeof formSchema>;
 
 export function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -43,8 +45,12 @@ export function LoginForm() {
   });
 
   useEffect(() => {
-    // This will be controlled by the RootLayout now
-    setShowLogin(true);
+    const splashTimer = setTimeout(() => {
+      setShowSplash(false);
+      setShowLogin(true);
+    }, 2500); // Duration of the splash animation
+
+    return () => clearTimeout(splashTimer);
   }, []);
   
   useEffect(() => {
@@ -149,14 +155,28 @@ export function LoginForm() {
     }
   };
 
+  if (showSplash) {
+    return <SplashScreen />;
+  }
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center w-full h-full relative">
       <div className={cn("flex-1 flex flex-col items-center justify-center p-8 w-full", showLogin ? 'login-screen-loaded' : 'opacity-0')}>
         <canvas id="particle-canvas" ref={canvasRef} className="absolute top-0 left-0 w-full h-full z-0"></canvas>
         
         <div className="login-element text-center mb-8 floating-icon">
-            <svg className="w-16 h-16 text-teal-400 mx-auto glowing-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line>
+             <svg className="w-16 h-16 text-teal-400 mx-auto glowing-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="12" y="12" width="40" height="40" rx="4" stroke="currentColor" strokeWidth="3"/>
+                <path d="M26 12V4" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M38 12V4" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M26 52V60" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M38 52V60" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M52 26H60" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M52 38H60" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M12 26H4" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M12 38H4" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                <path d="M24 24H30V30" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M40 40H34V34" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             <h1 className="text-2xl font-bold text-white tracking-wider mt-2">MobiTec</h1>
         </div>
