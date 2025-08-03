@@ -52,6 +52,12 @@ const shippingMethodOptions = [
     { value: 'outros', label: 'Outros' },
 ];
 
+const shippingStatusOptions = [
+  { value: 'Pendente', label: 'Pendente' },
+  { value: 'Em trânsito', label: 'Em trânsito' },
+  { value: 'Entregue', label: 'Entregue' },
+];
+
 interface ShipmentFormProps {
   onSubmit: (data: ShipmentFormValues) => void;
   allSchoolNames: string[];
