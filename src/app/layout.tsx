@@ -19,7 +19,7 @@ function AppContent({ children }: { children: React.ReactNode }) {
   const [isShowingSplash, setIsShowingSplash] = useState(true);
 
   useEffect(() => {
-    // Este temporizador garante que a tela de splash seja visível por pelo menos 7 segundos.
+    // Este temporizador garante que a tela de splash seja visível por um tempo.
     const splashTimer = setTimeout(() => {
       setIsShowingSplash(false);
     }, 7000); 
