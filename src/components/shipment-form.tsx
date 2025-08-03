@@ -150,13 +150,13 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
               />
               <FormField
                 control={form.control}
-                name="item"
+                name="sender"
                 render={({ field }) => (
                   <FormItem className="fade-in-up" style={{ animationDelay: '500ms' }}>
                     <FormControl>
                       <div className="relative">
-                        <Package className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                        <Input placeholder="Insumo (Ex: Projetor)" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
+                        <User className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                        <Input placeholder="Responsável pelo Envio" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
                       </div>
                     </FormControl>
                     <FormMessage className="text-red-400" />
@@ -165,13 +165,13 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
               />
               <FormField
                 control={form.control}
-                name="sender"
+                name="item"
                 render={({ field }) => (
                   <FormItem className="fade-in-up" style={{ animationDelay: '600ms' }}>
                     <FormControl>
                       <div className="relative">
-                        <User className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                        <Input placeholder="Responsável pelo Envio" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
+                        <Package className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                        <Input placeholder="Insumo (Ex: Projetor)" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
                       </div>
                     </FormControl>
                     <FormMessage className="text-red-400" />
