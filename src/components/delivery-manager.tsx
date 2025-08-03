@@ -2,13 +2,14 @@
 
 import { useState, useMemo } from 'react';
 import { useLocalStorage } from '@/hooks/use-local-storage';
-import type { Delivery, Collection, Visit, HistoryItem } from '@/lib/types';
+import type { Delivery, Collection, Visit, Shipment, HistoryItem } from '@/lib/types';
 import { DeliveryForm } from './delivery-form';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList, Bot, ClipboardCopy, Loader2, Send, Map } from 'lucide-react';
 import { CollectionForm } from './collection-form';
 import { VisitForm } from './visit-form';
+import { ShipmentForm } from './shipment-form';
 import { cn } from '@/lib/utils';
 import { Header } from './header';
 import { HistoryList } from './history-list';
@@ -31,6 +32,7 @@ export function DeliveryManager() {
   const [deliveries, setDeliveries] = useLocalStorage<Delivery[]>('deliveries', []);
   const [collections, setCollections] = useLocalStorage<Collection[]>('collections', []);
   const [visits, setVisits] = useLocalStorage<Visit[]>('visits', []);
+  const [shipments, setShipments] = useLocalStorage<Shipment[]>('shipments', []);
   const [lastItem, setLastItem] = useState<HistoryItem | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -41,8 +43,9 @@ export function DeliveryManager() {
     const unsyncedDeliveries = deliveries.filter(d => !d.synced).length;
     const unsyncedCollections = collections.filter(c => !c.synced).length;
     const unsyncedVisits = visits.filter(v => !v.synced).length;
-    return unsyncedDeliveries + unsyncedCollections + unsyncedVisits;
-  }, [deliveries, collections, visits]);
+    const unsyncedShipments = shipments.filter(s => !s.synced).length;
+    return unsyncedDeliveries + unsyncedCollections + unsyncedVisits + unsyncedShipments;
+  }, [deliveries, collections, visits, shipments]);
 
   const handleSync = () => {
     if (!isOnline) {
@@ -72,6 +75,7 @@ export function DeliveryManager() {
       setDeliveries(prev => prev.map(d => ({ ...d, synced: true })));
       setCollections(prev => prev.map(c => ({ ...c, synced: true })));
       setVisits(prev => prev.map(v => ({...v, synced: true})));
+      setShipments(prev => prev.map(s => ({...s, synced: true})));
       toast({
         title: 'Sucesso!',
         description: 'Todos os registros foram salvos na nuvem.',
@@ -119,6 +123,19 @@ export function DeliveryManager() {
     setShowSuccess(true);
   };
 
+  const handleAddShipment = (newShipmentData: Omit<Shipment, 'id' | 'createdAt' | 'synced' | 'type'>) => {
+    const newShipment: Shipment = {
+      ...newShipmentData,
+      id: new Date().toISOString() + Math.random(),
+      createdAt: new Date().toISOString(),
+      synced: isOnline,
+      type: 'shipment',
+    };
+    setShipments(prev => [newShipment, ...prev]);
+    setLastItem(newShipment);
+    setShowSuccess(true);
+  };
+
   const handleDeleteDelivery = (id: string) => {
     setDeliveries(prev => prev.filter(d => d.id !== id));
     toast({ title: "Entrega excluída com sucesso!" });
@@ -133,14 +150,20 @@ export function DeliveryManager() {
     setVisits(prev => prev.filter(v => v.id !== id));
     toast({ title: "Visita excluída com sucesso!" });
   };
+  
+  const handleDeleteShipment = (id: string) => {
+    setShipments(prev => prev.filter(s => s.id !== id));
+    toast({ title: "Envio excluído com sucesso!" });
+  };
 
 
   const allSchoolNames = useMemo(() => {
     const deliverySchools = deliveries.map(d => d.schoolName);
     const collectionSchools = collections.map(c => c.schoolName);
     const visitSchools = visits.map(v => v.schoolName);
-    return [...new Set([...deliverySchools, ...collectionSchools, ...visitSchools])];
-  }, [deliveries, collections, visits]);
+    const shipmentSchools = shipments.map(s => s.schoolName);
+    return [...new Set([...deliverySchools, ...collectionSchools, ...visitSchools, ...shipmentSchools])];
+  }, [deliveries, collections, visits, shipments]);
   
   const resetForm = () => {
     setShowSuccess(false);
@@ -160,15 +183,17 @@ export function DeliveryManager() {
       case 'visits':
         return <VisitForm onSubmit={handleAddVisit} allSchoolNames={allSchoolNames} />;
       case 'shipments':
-        return <div className="text-white text-center mt-10">Envios - Em breve</div>;
+        return <ShipmentForm onSubmit={handleAddShipment} allSchoolNames={allSchoolNames} />;
       case 'history':
         return <HistoryList 
                   deliveries={deliveries} 
                   collections={collections} 
                   visits={visits}
+                  shipments={shipments}
                   onDeleteDelivery={handleDeleteDelivery} 
                   onDeleteCollection={handleDeleteCollection} 
                   onDeleteVisit={handleDeleteVisit}
+                  onDeleteShipment={handleDeleteShipment}
                 />;
       default:
         return null;
@@ -243,7 +268,7 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
         try {
             const result = await generateMessage({
                 type: lastItem.type,
-                responsibleParty: lastItem.responsibleParty,
+                responsibleParty: 'responsibleParty' in lastItem ? lastItem.responsibleParty : lastItem.sender,
                 item: lastItem.item,
                 schoolName: lastItem.schoolName,
             });

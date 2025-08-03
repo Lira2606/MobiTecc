@@ -12,9 +12,9 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const GenerateMessageInputSchema = z.object({
-  type: z.enum(['delivery', 'collection']).describe('The type of registration: delivery or collection.'),
-  responsibleParty: z.string().describe('The name of the responsible person.'),
-  item: z.string().describe('The item that was delivered or collected.'),
+  type: z.enum(['delivery', 'collection', 'shipment']).describe('The type of registration: delivery, collection, or shipment.'),
+  responsibleParty: z.string().describe('The name of the responsible person or sender.'),
+  item: z.string().describe('The item that was delivered, collected, or shipped.'),
   schoolName: z.string().describe('The name of the school.'),
 });
 export type GenerateMessageInput = z.infer<typeof GenerateMessageInputSchema>;
@@ -42,10 +42,13 @@ The location is the school '{{schoolName}}'.
 
 - If the type is 'delivery', the message should confirm the successful delivery of the item.
 - If the type is 'collection', the message should confirm the successful collection of the item.
+- If the type is 'shipment', the message should confirm the item has been dispatched to the school.
 
 The message should be polite and clear. Start with a greeting.
 Example for delivery: "Olá, {{responsibleParty}}! Confirmando que o item '{{item}}' foi entregue com sucesso na escola {{schoolName}}. Agradecemos a colaboração!"
 Example for collection: "Olá, {{responsibleParty}}! Passando para confirmar que o item '{{item}}' foi recolhido com sucesso na escola {{schoolName}}. Obrigado!"
+Example for shipment: "Olá! Informamos que o item '{{item}}' foi despachado para a escola {{schoolName}} e em breve estará a caminho. Atenciosamente."
+
 
 Based on the generated message, also create a Telegram share URL. The URL should be in the format 'https://t.me/share/url?url=&text=<ENCODED_MESSAGE>'.
 URL-encode the message text for the telegramLink field.

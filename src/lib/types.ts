@@ -38,4 +38,19 @@ export interface Visit {
   synced: boolean;
 }
 
-export type HistoryItem = Delivery | Collection | Visit;
+export interface Shipment {
+  id: string;
+  type: 'shipment';
+  schoolName: string;
+  department?: string;
+  item: string;
+  sender: string;
+  shippingMethod: string;
+  shippingStatus: 'Pendente' | 'Em trânsito' | 'Entregue';
+  trackingCode?: string;
+  createdAt: string; // ISO string
+  synced: boolean;
+}
+
+
+export type HistoryItem = Delivery | Collection | Visit | Shipment;

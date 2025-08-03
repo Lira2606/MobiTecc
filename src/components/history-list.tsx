@@ -1,6 +1,6 @@
 'use client';
 
-import type { Delivery, Collection, Visit, HistoryItem } from '@/lib/types';
+import type { Delivery, Collection, Visit, Shipment, HistoryItem } from '@/lib/types';
 import {
   Card,
   CardContent,
@@ -30,7 +30,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { PackageOpen, Truck, Trash2, Eye, Cloud, CloudOff, Users, Map } from 'lucide-react';
+import { PackageOpen, Truck, Trash2, Eye, Cloud, CloudOff, Users, Map, Plane } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useState, useMemo } from 'react';
@@ -41,19 +41,22 @@ interface HistoryListProps {
   deliveries: Delivery[];
   collections: Collection[];
   visits: Visit[];
+  shipments: Shipment[];
   onDeleteDelivery: (id: string) => void;
   onDeleteCollection: (id:string) => void;
   onDeleteVisit: (id:string) => void;
+  onDeleteShipment: (id:string) => void;
 }
 
-export function HistoryList({ deliveries, collections, visits, onDeleteDelivery, onDeleteCollection, onDeleteVisit }: HistoryListProps) {
-  const [filter, setFilter] = useState<'all' | 'delivery' | 'collection' | 'visit'>('all');
+export function HistoryList({ deliveries, collections, visits, shipments, onDeleteDelivery, onDeleteCollection, onDeleteVisit, onDeleteShipment }: HistoryListProps) {
+  const [filter, setFilter] = useState<'all' | 'delivery' | 'collection' | 'visit' | 'shipment'>('all');
   
   const combinedHistory = useMemo(() => [
     ...deliveries.map((d) => ({ ...d, type: 'delivery' as const })),
     ...collections.map((c) => ({ ...c, type: 'collection' as const })),
     ...visits.map((v) => ({ ...v, type: 'visit' as const })),
-  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()), [deliveries, collections, visits]);
+    ...shipments.map((s) => ({ ...s, type: 'shipment' as const })),
+  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()), [deliveries, collections, visits, shipments]);
 
   const filteredHistory = useMemo(() => {
     if (filter === 'all') return combinedHistory;
@@ -86,7 +89,7 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
     );
   }
 
-  const renderIcon = (type: 'delivery' | 'collection' | 'visit') => {
+  const renderIcon = (type: 'delivery' | 'collection' | 'visit' | 'shipment') => {
     switch (type) {
       case 'delivery':
         return <Truck className="w-6 h-6 text-primary" />;
@@ -94,6 +97,8 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
         return <PackageOpen className="w-6 h-6 text-primary" />;
       case 'visit':
         return <Users className="w-6 h-6 text-primary" />;
+      case 'shipment':
+        return <Plane className="w-6 h-6 text-primary" />;
     }
   }
 
@@ -107,6 +112,9 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
         break;
       case 'visit':
         onDeleteVisit(item.id);
+        break;
+      case 'shipment':
+        onDeleteShipment(item.id);
         break;
     }
   }
@@ -122,11 +130,12 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
         )}
       </div>
        <Tabs defaultValue="all" onValueChange={(value) => setFilter(value as any)} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="all">Todos</TabsTrigger>
           <TabsTrigger value="delivery">Entregas</TabsTrigger>
-          <TabsTrigger value="collection">Recolha</TabsTrigger>
+          <TabsTrigger value="collection">Recolhas</TabsTrigger>
           <TabsTrigger value="visit">Visitas</TabsTrigger>
+          <TabsTrigger value="shipment">Envios</TabsTrigger>
         </TabsList>
       </Tabs>
       <div className="space-y-4 pt-4">
@@ -159,11 +168,15 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
                   <span className="font-semibold">Item:</span> {item.item}
                 </p>
                )}
-               {item.type !== 'visit' && 'responsibleParty' in item && (
+               {item.type === 'delivery' || item.type === 'collection' ? (
                   <p className="text-sm text-slate-300">
                     <span className="font-semibold">Responsável:</span> {item.responsibleParty}
                   </p>
-               )}
+               ) : item.type === 'shipment' ? (
+                  <p className="text-sm text-slate-300">
+                    <span className="font-semibold">Remetente:</span> {item.sender}
+                  </p>
+               ): null}
                {item.type === 'visit' && 'schoolAddress' in item && (
                   <p className="text-sm text-slate-300">
                     <span className="font-semibold">Endereço:</span> {item.schoolAddress}
@@ -208,7 +221,7 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
                 {item.schoolName}
               </DialogTitle>
               <DialogDescription>
-                Detalhes do registro de {item.type === 'delivery' ? 'entrega' : item.type === 'collection' ? 'recolhimento' : 'visita'}.
+                Detalhes do registro de {item.type === 'delivery' ? 'entrega' : item.type === 'collection' ? 'recolhimento' : item.type === 'visit' ? 'visita' : 'envio'}.
                  <span className={cn('ml-2 text-xs font-bold', item.synced ? 'text-green-400' : 'text-gray-500')}>
                   ({item.synced ? 'Salvo na nuvem' : 'Pendente de envio'})
                 </span>
@@ -220,6 +233,15 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
                 <>
                   {item.inep && <p><span className="font-semibold">INEP:</span> {item.inep}</p>}
                   <p><span className="font-semibold">Endereço:</span> {item.schoolAddress}</p>
+                </>
+              ) : item.type === 'shipment' ? (
+                <>
+                  {item.department && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}
+                  <p><span className="font-semibold">Item:</span> {item.item}</p>
+                  <p><span className="font-semibold">Remetente:</span> {item.sender}</p>
+                  <p><span className="font-semibold">Método de Envio:</span> {item.shippingMethod}</p>
+                  <p><span className="font-semibold">Status:</span> {item.shippingStatus}</p>
+                  {item.trackingCode && <p><span className="font-semibold">Cód. Rastreio:</span> {item.trackingCode}</p>}
                 </>
               ) : (
                 <>
