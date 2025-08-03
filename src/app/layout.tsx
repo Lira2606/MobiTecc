@@ -17,14 +17,14 @@ const inter = Inter({
 
 function AppContent({ children }: { children: React.ReactNode }) {
   const screenRef = useRef<HTMLDivElement>(null);
-  const [loading, setLoading] = useState(true);
+  const [showSplash, setShowSplash] = useState(true);
   const { isLoading, isAuthenticated } = useAuth();
   const pathname = usePathname();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2500);
+      setShowSplash(false);
+    }, 2500); // Same duration as splash animation
     return () => clearTimeout(timer);
   }, []);
 
@@ -45,13 +45,15 @@ function AppContent({ children }: { children: React.ReactNode }) {
     return () => {
       screen.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [loading]);
+  }, []);
   
   const showShell = isAuthenticated || pathname === '/login';
 
-  if(loading || isLoading) {
+  const shouldShowSplash = (isLoading || showSplash) && pathname !== '/login';
+
+  if(shouldShowSplash) {
     return (
-      <div className="bg-gray-900 flex items-center justify-center min-h-screen">
+      <div className="bg-slate-900 flex items-center justify-center min-h-screen">
           <SplashScreen />
       </div>
     )
