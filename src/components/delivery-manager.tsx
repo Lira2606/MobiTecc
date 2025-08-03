@@ -13,7 +13,6 @@ import { Header } from './header';
 import { HistoryList } from './history-list';
 import { useOnlineStatus } from '@/hooks/use-online-status';
 import { generateMessage } from '@/ai/flows/generate-message';
-import { createSummary } from '@/ai/flows/create-summary';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -196,35 +195,21 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
     const [telegramLink, setTelegramLink] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [dialogTitle, setDialogTitle] = useState('');
 
-    const handleGenerateClick = async (type: 'message' | 'summary') => {
+    const handleGenerateMessage = async () => {
         setIsGenerating(true);
         setTelegramLink('');
-        setDialogTitle(type === 'message' ? 'Mensagem Gerada' : 'Resumo Gerado');
-
+        
         try {
-            if (type === 'message') {
-                const result = await generateMessage({
-                    type: lastItem.type,
-                    responsibleParty: lastItem.responsibleParty,
-                    item: lastItem.item,
-                    schoolName: lastItem.schoolName,
-                });
-                setGeneratedContent(result.message);
-                if (result.telegramLink) {
-                    setTelegramLink(result.telegramLink);
-                }
-            } else {
-                const result = await createSummary({
-                    type: lastItem.type,
-                    responsibleParty: lastItem.responsibleParty,
-                    item: lastItem.item,
-                    schoolName: lastItem.schoolName,
-                    department: lastItem.department,
-                    createdAt: lastItem.createdAt,
-                });
-                setGeneratedContent(result.summary);
+            const result = await generateMessage({
+                type: lastItem.type,
+                responsibleParty: lastItem.responsibleParty,
+                item: lastItem.item,
+                schoolName: lastItem.schoolName,
+            });
+            setGeneratedContent(result.message);
+            if (result.telegramLink) {
+                setTelegramLink(result.telegramLink);
             }
             setDialogOpen(true);
         } catch (error) {
@@ -256,11 +241,8 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
                 <h2 className="text-3xl font-bold text-white mb-2 fade-in-up" style={{animationDelay: '100ms'}}>Registrado!</h2>
                 <p className="text-gray-400 text-center mb-4 fade-in-up" style={{animationDelay: '200ms'}}>Os detalhes foram guardados com sucesso.</p>
                 <div className="w-full space-y-3 mt-4 fade-in-up" style={{animationDelay: '300ms'}}>
-                    <Button onClick={() => handleGenerateClick('message')} disabled={isGenerating} variant="outline" className="w-full bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border-sky-500/30 hover:text-sky-200">
-                         {isGenerating && dialogTitle.includes('Mensagem') ? <Loader2 className="animate-spin" /> : '✨ Gerar Mensagem'}
-                    </Button>
-                    <Button onClick={() => handleGenerateClick('summary')} disabled={isGenerating} variant="outline" className="w-full bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border-purple-500/30 hover:text-purple-200">
-                        {isGenerating && dialogTitle.includes('Resumo') ? <Loader2 className="animate-spin" /> : '✨ Criar Resumo'}
+                    <Button onClick={handleGenerateMessage} disabled={isGenerating} variant="outline" className="w-full bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border-sky-500/30 hover:text-sky-200">
+                         {isGenerating ? <Loader2 className="animate-spin" /> : '✨ Gerar Mensagem'}
                     </Button>
                 </div>
                 <Button onClick={onNewRecord} className="mt-6 bg-slate-700 hover:bg-slate-600 text-white font-bold fade-in-up" style={{animationDelay: '400ms'}}>
@@ -272,7 +254,7 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle className="flex items-center gap-2">
-                           <Bot className="text-primary" /> {dialogTitle}
+                           <Bot className="text-primary" /> Mensagem Gerada
                         </AlertDialogTitle>
                         <AlertDialogDescription>
                             Abaixo está o conteúdo gerado pela IA. Você pode copiá-lo para usar onde precisar.
