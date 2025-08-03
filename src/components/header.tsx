@@ -39,8 +39,13 @@ export function Header({ unsyncedCount, onSync, isOnline }: HeaderProps) {
       </div>
       <div className="bg-transparent text-white p-6 pb-2 flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <svg className="w-8 h-8 text-teal-400 glowing-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line>
+            <svg className="w-8 h-8 text-teal-400 glowing-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2" />
+              <path d="M3 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+              <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+              <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+              <path d="M8 8.5v3h3" />
+              <path d="M16 15.5v-3h-3" />
             </svg>
               <h1 className="text-2xl font-bold tracking-wider">MobiTec</h1>
           </div>
