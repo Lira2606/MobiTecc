@@ -6,7 +6,7 @@ import type { Delivery, Collection, Visit, Shipment, HistoryItem } from '@/lib/t
 import { DeliveryForm } from './delivery-form';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList, Bot, ClipboardCopy, Loader2, Send, Map } from 'lucide-react';
+import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList, Bot, ClipboardCopy, Loader2, Send, Map, User } from 'lucide-react';
 import { CollectionForm } from './collection-form';
 import { VisitForm } from './visit-form';
 import { ShipmentForm } from './shipment-form';
@@ -25,10 +25,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { ProfilePage } from './profile-page';
 
 
 export function DeliveryManager() {
-  const [activeTab, setActiveTab] = useState<'deliveries' | 'collections' | 'visits' | 'shipments' | 'history'>('deliveries');
+  const [activeTab, setActiveTab] = useState<'deliveries' | 'collections' | 'visits' | 'shipments' | 'history' | 'profile'>('deliveries');
   const [deliveries, setDeliveries] = useLocalStorage<Delivery[]>('deliveries', []);
   const [collections, setCollections] = useLocalStorage<Collection[]>('collections', []);
   const [visits, setVisits] = useLocalStorage<Visit[]>('visits', []);
@@ -195,12 +196,14 @@ export function DeliveryManager() {
                   onDeleteVisit={handleDeleteVisit}
                   onDeleteShipment={handleDeleteShipment}
                 />;
+      case 'profile':
+        return <ProfilePage />;
       default:
         return null;
     }
   }
 
-  const getButtonClass = (tabName: 'deliveries' | 'collections' | 'visits' | 'shipments' | 'history') => {
+  const getButtonClass = (tabName: 'deliveries' | 'collections' | 'visits' | 'shipments' | 'history' | 'profile') => {
     return cn(
       "flex flex-col items-center transition-transform duration-200 nav-link",
        activeTab === tabName ? 'text-green-400' : 'text-white'
@@ -238,6 +241,10 @@ export function DeliveryManager() {
              <button onClick={() => { setActiveTab('history'); resetForm(); }} className={getButtonClass('history')}>
                 <ClipboardList className="w-7 h-7 mb-1" />
                 <span className="text-xs font-medium">Registros</span>
+            </button>
+            <button onClick={() => { setActiveTab('profile'); resetForm(); }} className={getButtonClass('profile')}>
+                <User className="w-7 h-7 mb-1" />
+                <span className="text-xs font-medium">Perfil</span>
             </button>
         </nav>
     </div>
@@ -358,3 +365,5 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
         </>
     );
 }
+
+    
