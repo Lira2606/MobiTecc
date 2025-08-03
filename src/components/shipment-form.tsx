@@ -20,7 +20,18 @@ import {
 } from "@/components/ui/select"
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
-import { Loader2, Home, User, Building, Package, Send, Hash, Truck as TruckIcon } from 'lucide-react';
+import { Loader2, Home, User, Building, Package, Send, Hash, Truck as TruckIcon, Pencil } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+
 
 const formSchema = z.object({
   schoolName: z.string().min(2, { message: 'O nome da escola é obrigatório.' }),
@@ -54,6 +65,8 @@ interface ShipmentFormProps {
 
 export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isOtherMethodDialogOpen, setIsOtherMethodDialogOpen] = useState(false);
+  const [otherShippingMethod, setOtherShippingMethod] = useState('');
 
   const form = useForm<ShipmentFormValues>({
     resolver: zodResolver(formSchema),
@@ -65,6 +78,25 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
       trackingCode: '',
     },
   });
+
+  const handleShippingMethodChange = (value: string) => {
+    if (value === 'outros') {
+      setIsOtherMethodDialogOpen(true);
+    } else {
+      form.setValue('shippingMethod', value);
+    }
+  };
+
+  const handleSaveOtherMethod = () => {
+    if (otherShippingMethod.trim() !== '') {
+      form.setValue('shippingMethod', otherShippingMethod.trim());
+      setIsOtherMethodDialogOpen(false);
+    }
+  };
+
+  const shippingMethodValue = form.watch('shippingMethod');
+  const isCustomMethod = shippingMethodValue && !shippingMethodOptions.some(opt => opt.value === shippingMethodValue);
+
 
   const handleSubmit = (data: ShipmentFormValues) => {
     setIsSubmitting(true);
@@ -143,31 +175,51 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
                 )}
               />
                <FormField
-                control={form.control}
-                name="shippingMethod"
-                render={({ field }) => (
-                  <FormItem className="fade-in-up" style={{ animationDelay: '700ms' }}>
-                    <FormControl>
-                      <div className="relative">
-                        <TruckIcon className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                           <SelectTrigger className="pl-12 h-14 bg-slate-800 border-slate-700 data-[placeholder]:text-muted-foreground text-white">
-                            <SelectValue placeholder="Forma de Envio" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-slate-800 border-slate-700 text-white">
-                            {shippingMethodOptions.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-red-400" />
-                  </FormItem>
-                )}
-              />
+                  control={form.control}
+                  name="shippingMethod"
+                  render={({ field }) => (
+                    <FormItem className="fade-in-up" style={{ animationDelay: '700ms' }}>
+                      <FormControl>
+                        {isCustomMethod ? (
+                          <div className="relative">
+                            <TruckIcon className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                            <Input
+                              readOnly
+                              value={field.value}
+                              className="pl-12 pr-12 h-14 bg-slate-800 border-slate-700 text-white"
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 text-gray-400 hover:text-white"
+                              onClick={() => setIsOtherMethodDialogOpen(true)}
+                            >
+                              <Pencil className="w-5 h-5" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="relative">
+                            <TruckIcon className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
+                            <Select onValueChange={handleShippingMethodChange} value={field.value}>
+                              <SelectTrigger className="pl-12 h-14 bg-slate-800 border-slate-700 data-[placeholder]:text-muted-foreground text-white">
+                                <SelectValue placeholder="Forma de Envio" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-slate-800 border-slate-700 text-white">
+                                {shippingMethodOptions.map((option) => (
+                                  <SelectItem key={option.value} value={option.value}>
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+                      </FormControl>
+                      <FormMessage className="text-red-400" />
+                    </FormItem>
+                  )}
+                />
               <FormField
                 control={form.control}
                 name="shippingStatus"
@@ -222,6 +274,34 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
           </form>
         </Form>
       </div>
+
+      <AlertDialog open={isOtherMethodDialogOpen} onOpenChange={setIsOtherMethodDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Outra Forma de Envio</AlertDialogTitle>
+            <AlertDialogDescription>
+              Por favor, especifique a forma de envio personalizada.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <Input 
+            placeholder="Ex: Entrega por Drone"
+            value={otherShippingMethod}
+            onChange={(e) => setOtherShippingMethod(e.target.value)}
+            className="bg-slate-700 border-slate-600"
+          />
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              if (!isCustomMethod) form.setValue('shippingMethod', '');
+              setIsOtherMethodDialogOpen(false);
+            }}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleSaveOtherMethod}>
+              Salvar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
