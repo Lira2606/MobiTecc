@@ -1,6 +1,6 @@
 'use client';
 
-import type { Delivery, Collection, Visit } from '@/lib/types';
+import type { Delivery, Collection, Visit, HistoryItem } from '@/lib/types';
 import {
   Card,
   CardContent,
@@ -33,6 +33,9 @@ import {
 import { PackageOpen, Truck, Trash2, Eye, Cloud, CloudOff, Users } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { useState, useMemo } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 
 interface HistoryListProps {
   deliveries: Delivery[];
@@ -44,11 +47,19 @@ interface HistoryListProps {
 }
 
 export function HistoryList({ deliveries, collections, visits, onDeleteDelivery, onDeleteCollection, onDeleteVisit }: HistoryListProps) {
-  const combinedHistory = [
+  const [filter, setFilter] = useState<'all' | 'delivery' | 'collection' | 'visit'>('all');
+  
+  const combinedHistory = useMemo(() => [
     ...deliveries.map((d) => ({ ...d, type: 'delivery' as const })),
     ...collections.map((c) => ({ ...c, type: 'collection' as const })),
     ...visits.map((v) => ({ ...v, type: 'visit' as const })),
-  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()), [deliveries, collections, visits]);
+
+  const filteredHistory = useMemo(() => {
+    if (filter === 'all') return combinedHistory;
+    return combinedHistory.filter(item => item.type === filter);
+  }, [combinedHistory, filter]);
+
 
   if (combinedHistory.length === 0) {
     return (
@@ -70,7 +81,7 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
     }
   }
 
-  const handleDelete = (item: typeof combinedHistory[0]) => {
+  const handleDelete = (item: HistoryItem) => {
     switch (item.type) {
       case 'delivery':
         onDeleteDelivery(item.id);
@@ -87,7 +98,16 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
   return (
     <div className="space-y-4">
       <h2 className="text-3xl font-bold text-white">Histórico de Registros</h2>
-       {combinedHistory.map((item) => (
+       <Tabs defaultValue="all" onValueChange={(value) => setFilter(value as any)} className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="all">Todos</TabsTrigger>
+          <TabsTrigger value="delivery">Entregas</TabsTrigger>
+          <TabsTrigger value="collection">Recolha</TabsTrigger>
+          <TabsTrigger value="visit">Visitas</TabsTrigger>
+        </TabsList>
+      </Tabs>
+      <div className="space-y-4 pt-4">
+       {filteredHistory.map((item) => (
          <Dialog key={item.id}>
           <Card className="bg-slate-800 border-slate-700 text-white flex flex-col">
             <CardHeader>
@@ -209,6 +229,7 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
           </DialogContent>
          </Dialog>
       ))}
+      </div>
     </div>
   );
 }
