@@ -48,7 +48,7 @@ export function LoginForm() {
     const splashTimer = setTimeout(() => {
       setShowSplash(false);
       setShowLogin(true);
-    }, 10000); // Duration of the splash animation
+    }, 8000); // Duration of the splash animation
 
     return () => clearTimeout(splashTimer);
   }, []);
