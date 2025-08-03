@@ -7,6 +7,7 @@ import { SplashScreen } from '@/components/splash-screen';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import './globals.css';
+import { useEffect, useState } from 'react';
 
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -15,10 +16,25 @@ const inter = Inter({
 });
 
 function AppContent({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const pathname = usePathname();
+  const [isShowingSplash, setIsShowingSplash] = useState(true);
+
+  useEffect(() => {
+    // This timer ensures the splash screen is visible for at least 7 seconds.
+    const splashTimer = setTimeout(() => {
+      setIsShowingSplash(false);
+    }, 7000); 
+
+    return () => clearTimeout(splashTimer);
+  }, []);
+
+  // Show splash while auth is loading or the splash timer is active.
+  if (isLoading || isShowingSplash) {
+    return <SplashScreen />;
+  }
   
-  const showShell = isAuthenticated || pathname === '/login' || pathname === '/';
+  const showShell = isAuthenticated || pathname === '/login';
 
   return (
     <div className={cn(
