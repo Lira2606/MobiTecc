@@ -175,6 +175,7 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
               <p><span className="font-semibold">Data:</span> {new Date(item.createdAt).toLocaleString('pt-BR')}</p>
               {item.type === 'visit' ? (
                 <>
+                  {item.inep && <p><span className="font-semibold">INEP:</span> {item.inep}</p>}
                   <p><span className="font-semibold">Endereço:</span> {item.schoolAddress}</p>
                 </>
               ) : (

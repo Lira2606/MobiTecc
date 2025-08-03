@@ -31,6 +31,7 @@ export interface Collection {
 export interface Visit {
   id: string;
   type: 'visit';
+  inep?: string;
   schoolName: string;
   schoolAddress: string;
   createdAt: string; // ISO string
