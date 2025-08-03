@@ -178,11 +178,37 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="shippingStatus"
+                render={({ field }) => (
+                  <FormItem className="fade-in-up" style={{ animationDelay: '700ms' }}>
+                    <FormControl>
+                      <div className="relative">
+                        <Send className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                           <SelectTrigger className="pl-12 h-14 bg-slate-800 border-slate-700 data-[placeholder]:text-muted-foreground text-white">
+                            <SelectValue placeholder="Status do Envio" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-slate-800 border-slate-700 text-white">
+                            {shippingStatusOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value as 'Pendente' | 'Em trânsito' | 'Entregue'}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </FormControl>
+                    <FormMessage className="text-red-400" />
+                  </FormItem>
+                )}
+              />
                <FormField
                   control={form.control}
                   name="shippingMethod"
                   render={({ field }) => (
-                    <FormItem className="fade-in-up" style={{ animationDelay: '700ms' }}>
+                    <FormItem className="fade-in-up" style={{ animationDelay: '800ms' }}>
                       <FormControl>
                         {isCustomMethod ? (
                           <div className="relative">
@@ -235,32 +261,6 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
                     </FormItem>
                   )}
                 />
-              <FormField
-                control={form.control}
-                name="shippingStatus"
-                render={({ field }) => (
-                  <FormItem className="fade-in-up" style={{ animationDelay: '800ms' }}>
-                    <FormControl>
-                      <div className="relative">
-                        <Send className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                           <SelectTrigger className="pl-12 h-14 bg-slate-800 border-slate-700 data-[placeholder]:text-muted-foreground text-white">
-                            <SelectValue placeholder="Status do Envio" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-slate-800 border-slate-700 text-white">
-                            {shippingStatusOptions.map((option) => (
-                              <SelectItem key={option.value} value={option.value as 'Pendente' | 'Em trânsito' | 'Entregue'}>
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-red-400" />
-                  </FormItem>
-                )}
-              />
                {(shippingMethodValue === 'correios' || shippingMethodValue === 'transportadora') && (
                 <FormField
                   control={form.control}
