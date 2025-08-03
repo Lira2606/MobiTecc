@@ -29,12 +29,10 @@ function AppContent({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(splashTimer);
   }, []);
 
-  // Show splash while auth is loading or the splash timer is active.
-  if (isLoading || isShowingSplash) {
-    return <SplashScreen />;
-  }
+  const showSplash = isLoading || isShowingSplash;
   
-  const showShell = isAuthenticated || pathname === '/login';
+  // The shell should be shown for login, authenticated routes, and during the splash screen
+  const showShell = isAuthenticated || pathname === '/login' || showSplash;
 
   return (
     <div className={cn(
@@ -47,11 +45,12 @@ function AppContent({ children }: { children: React.ReactNode }) {
             id="mobile-screen" 
             className="mobile-screen w-full rounded-3xl overflow-hidden relative flex flex-col"
           >
-           {children}
+           {showSplash ? <SplashScreen /> : children}
           </div>
         </div>
       ) : (
-        children
+        // This case should ideally not be hit if splash is inside shell, but kept for robustness
+        showSplash ? <SplashScreen /> : children
       )}
        <Toaster />
     </div>
