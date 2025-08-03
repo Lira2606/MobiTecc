@@ -1,12 +1,13 @@
 'use client';
 
+import { Inter } from 'next/font/google';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import type { Metadata } from 'next';
-import './globals.css';
+import { AuthProvider, useAuth } from '@/context/auth-context';
+import { SplashScreen } from '@/components/splash-screen';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
-import { Inter } from 'next/font/google';
-import { SplashScreen } from '@/components/splash-screen';
+import './globals.css';
 
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -14,22 +15,11 @@ const inter = Inter({
   variable: '--font-sans' 
 });
 
-// Metadata can't be exported from a client component.
-// If you need dynamic metadata, you can export a generateMetadata function.
-// For static metadata, you can move it to a parent layout or the page component.
-// For now, I will comment it out. A proper fix would be to extract this to a client component.
-// export const metadata: Metadata = {
-//   title: 'MobiTec',
-//   description: 'Gerencie suas entregas de forma fácil e eficiente.',
-// };
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+function AppContent({ children }: { children: React.ReactNode }) {
   const screenRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
+  const { isLoading, isAuthenticated } = useAuth();
+  const pathname = usePathname();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -37,7 +27,6 @@ export default function RootLayout({
     }, 2500);
     return () => clearTimeout(timer);
   }, []);
-
 
   useEffect(() => {
     const screen = screenRef.current;
@@ -57,20 +46,51 @@ export default function RootLayout({
       screen.removeEventListener('mousemove', handleMouseMove);
     };
   }, [loading]);
+  
+  const showShell = isAuthenticated || pathname === '/login';
+
+  if(loading || isLoading) {
+    return (
+      <div className="bg-gray-900 flex items-center justify-center min-h-screen">
+          <SplashScreen />
+      </div>
+    )
+  }
 
   return (
-    <html lang="pt-BR" suppressHydrationWarning>
-      <body className={cn('bg-gray-900 flex items-center justify-center min-h-screen p-4 font-sans', inter.variable)}>
-        <div className="mobile-shell w-full max-w-[450px]">
+    <div className={cn(
+      'flex items-center justify-center min-h-screen p-4 font-sans',
+       showShell ? 'bg-gray-900' : 'bg-slate-900'
+    )}>
+      {showShell ? (
+         <div className="mobile-shell w-full max-w-[450px]">
           <div 
             id="mobile-screen" 
             ref={screenRef}
             className="mobile-screen w-full rounded-3xl overflow-hidden relative flex flex-col"
           >
-            {loading ? <SplashScreen /> : children}
+           {children}
           </div>
         </div>
-        <Toaster />
+      ) : (
+        children
+      )}
+       <Toaster />
+    </div>
+  )
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className={cn(inter.variable)}>
+        <AuthProvider>
+            <AppContent>{children}</AppContent>
+        </AuthProvider>
       </body>
     </html>
   );
