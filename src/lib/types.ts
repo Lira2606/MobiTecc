@@ -50,6 +50,7 @@ export interface Shipment {
   trackingCode?: string;
   createdAt: string; // ISO string
   synced: boolean;
+  photoDataUri?: string;
 }
 
 

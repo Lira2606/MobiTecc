@@ -242,6 +242,18 @@ export function HistoryList({ deliveries, collections, visits, shipments, onDele
                   <p><span className="font-semibold">Método de Envio:</span> {item.shippingMethod}</p>
                   <p><span className="font-semibold">Status:</span> {item.shippingStatus}</p>
                   {item.trackingCode && <p><span className="font-semibold">Cód. Rastreio:</span> {item.trackingCode}</p>}
+                  {item.photoDataUri && (
+                    <div className="mt-4">
+                      <p className="font-semibold mb-2">Foto:</p>
+                      <Image
+                        src={item.photoDataUri}
+                        alt="Foto do registro"
+                        width={500}
+                        height={500}
+                        className="rounded-lg object-contain"
+                      />
+                    </div>
+                  )}
                 </>
               ) : (
                 <>

@@ -19,8 +19,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
-import { Loader2, Home, User, Building, Package, Send, Hash, Truck as TruckIcon, Pencil, X } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Loader2, Home, User, Building, Package, Send, Hash, Truck as TruckIcon, Pencil, X, Camera, Upload, Check, CameraOff } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,16 +31,20 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 
 const formSchema = z.object({
   schoolName: z.string().min(2, { message: 'O nome da escola é obrigatório.' }),
   department: z.string().optional(),
-  item: z.string().min(2, { message: 'O nome do insumo é obrigatório.' }),
   sender: z.string().min(2, { message: 'O nome do responsável pelo envio é obrigatório.' }),
-  shippingMethod: z.string({ required_error: 'Selecione a forma de envio.' }),
+  item: z.string().min(2, { message: 'O nome do insumo é obrigatório.' }),
   shippingStatus: z.enum(['Pendente', 'Em trânsito', 'Entregue'], { required_error: 'Selecione o status do envio.' }),
+  shippingMethod: z.string({ required_error: 'Selecione a forma de envio.' }),
   trackingCode: z.string().optional(),
+  photoDataUri: z.string().optional(),
 });
 
 type ShipmentFormValues = z.infer<typeof formSchema>;
@@ -67,6 +71,14 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOtherMethodDialogOpen, setIsOtherMethodDialogOpen] = useState(false);
   const [otherShippingMethod, setOtherShippingMethod] = useState('');
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [isTakingPhoto, setIsTakingPhoto] = useState(false);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { toast } = useToast();
 
   const form = useForm<ShipmentFormValues>({
     resolver: zodResolver(formSchema),
@@ -76,8 +88,46 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
       item: '',
       sender: '',
       trackingCode: '',
+      photoDataUri: '',
     },
   });
+
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+    const getCameraPermission = async () => {
+      if (!isTakingPhoto) {
+         if (videoRef.current && videoRef.current.srcObject) {
+            (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+            videoRef.current.srcObject = null;
+          }
+        return;
+      }
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({video: true});
+        setHasCameraPermission(true);
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (error) {
+        console.error('Error accessing camera:', error);
+        setHasCameraPermission(false);
+        toast({
+          variant: 'destructive',
+          title: 'Acesso à câmera negado',
+          description: 'Por favor, habilite a permissão da câmera nas configurações do seu navegador.',
+        });
+        setIsTakingPhoto(false);
+      }
+    };
+
+    getCameraPermission();
+
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [isTakingPhoto, toast]);
 
   const handleShippingMethodChange = (value: string) => {
     if (value === 'outros') {
@@ -96,6 +146,44 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
   
   const handleClearCustomMethod = () => {
     form.setValue('shippingMethod', '');
+  };
+
+  const handlePhotoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const dataUri = reader.result as string;
+        setPhotoPreview(dataUri);
+        form.setValue('photoDataUri', dataUri);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearPhoto = () => {
+    setPhotoPreview(null);
+    form.setValue('photoDataUri', '');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    setIsTakingPhoto(false);
+  };
+  
+  const capturePhoto = () => {
+    if (videoRef.current && canvasRef.current) {
+      const context = canvasRef.current.getContext('2d');
+      if (context) {
+        const video = videoRef.current;
+        canvasRef.current.width = video.videoWidth;
+        canvasRef.current.height = video.videoHeight;
+        context.drawImage(video, 0, 0, video.videoWidth, video.videoHeight);
+        const dataUri = canvasRef.current.toDataURL('image/jpeg');
+        setPhotoPreview(dataUri);
+        form.setValue('photoDataUri', dataUri);
+        setIsTakingPhoto(false);
+      }
+    }
   };
 
   const shippingMethodValue = form.watch('shippingMethod');
@@ -278,7 +366,79 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
                   )}
                 />
                )}
+              <div className="fade-in-up" style={{ animationDelay: '900ms' }}>
+                  <FormControl>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      ref={fileInputRef}
+                      onChange={handlePhotoChange}
+                    />
+                  </FormControl>
 
+                   <canvas ref={canvasRef} className="hidden" />
+
+                  {isTakingPhoto ? (
+                      <div className="space-y-4">
+                          <video ref={videoRef} className="w-full aspect-video rounded-md bg-slate-800" autoPlay muted />
+                          {hasCameraPermission === false && (
+                              <Alert variant="destructive">
+                                  <CameraOff className="h-4 w-4" />
+                                  <AlertTitle>Acesso à câmera negado</AlertTitle>
+                                  <AlertDescription>
+                                      Habilite a permissão da câmera para tirar fotos.
+                                  </AlertDescription>
+                              </Alert>
+                          )}
+                           <div className="grid grid-cols-2 gap-4">
+                              <Button type="button" onClick={capturePhoto} disabled={!hasCameraPermission}>
+                                  <Check className="mr-2 h-4 w-4" /> Capturar
+                              </Button>
+                               <Button type="button" variant="outline" onClick={() => setIsTakingPhoto(false)}>
+                                  <X className="mr-2 h-4 w-4" /> Cancelar
+                              </Button>
+                          </div>
+                      </div>
+                  ) : photoPreview ? (
+                    <div className="relative group mx-auto w-fit">
+                      <Image
+                        src={photoPreview}
+                        alt="Pré-visualização"
+                        width={200}
+                        height={200}
+                        className="max-h-48 w-auto rounded-lg object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={clearPhoto}
+                        className="absolute top-2 right-2 bg-black/50 rounded-full p-1 text-white hover:bg-black/75 transition-all opacity-0 group-hover:opacity-100"
+                        aria-label="Remover foto"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-4">
+                      <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="w-full flex flex-col items-center justify-center p-2 border-2 border-dashed border-primary/20 rounded-lg text-primary hover:bg-primary/10 transition-all"
+                      >
+                          <Upload className="w-6 h-6 mb-1" />
+                          <span className="text-xs font-semibold">Adicionar Foto</span>
+                      </button>
+                      <button
+                          type="button"
+                          onClick={() => setIsTakingPhoto(true)}
+                          className="w-full flex flex-col items-center justify-center p-2 border-2 border-dashed border-primary/20 rounded-lg text-primary hover:bg-primary/10 transition-all"
+                      >
+                          <Camera className="w-6 h-6 mb-1" />
+                          <span className="text-xs font-semibold">Tirar Foto</span>
+                      </button>
+                    </div>
+                  )}
+              </div>
 
             <div className="pt-4 fade-in-up" style={{ animationDelay: '1000ms' }}>
               <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-primary to-green-500 hover:from-primary/90 hover:to-green-500/90 text-white font-bold py-3 h-auto px-4 rounded-lg shadow-lg hover:shadow-primary/50 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center text-base">
