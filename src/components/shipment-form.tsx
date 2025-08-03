@@ -261,21 +261,24 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
                   </FormItem>
                 )}
               />
-               <FormField
-                control={form.control}
-                name="trackingCode"
-                render={({ field }) => (
-                  <FormItem className="fade-in-up" style={{ animationDelay: '900ms' }}>
-                    <FormControl>
-                       <div className="relative">
-                        <Hash className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                        <Input placeholder="Código de Rastreio (Opcional)" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
-                      </div>
-                    </FormControl>
-                    <FormMessage className="text-red-400" />
-                  </FormItem>
-                )}
-              />
+               {(shippingMethodValue === 'correios' || shippingMethodValue === 'transportadora') && (
+                <FormField
+                  control={form.control}
+                  name="trackingCode"
+                  render={({ field }) => (
+                    <FormItem className="fade-in-up" style={{ animationDelay: '900ms' }}>
+                      <FormControl>
+                         <div className="relative">
+                          <Hash className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                          <Input placeholder="Código de Rastreio (Opcional)" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage className="text-red-400" />
+                    </FormItem>
+                  )}
+                />
+               )}
+
 
             <div className="pt-4 fade-in-up" style={{ animationDelay: '1000ms' }}>
               <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-primary to-green-500 hover:from-primary/90 hover:to-green-500/90 text-white font-bold py-3 h-auto px-4 rounded-lg shadow-lg hover:shadow-primary/50 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center text-base">
