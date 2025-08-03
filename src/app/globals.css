@@ -109,6 +109,11 @@
         animation: fadeInUp 1s ease-out 0.5s forwards; 
         opacity: 0; 
     }
+
+    .fade-in-up {
+      animation: fadeInUp 0.5s ease-out forwards;
+      opacity: 0;
+    }
     
     .no-scrollbar::-webkit-scrollbar {
       display: none;

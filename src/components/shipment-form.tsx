@@ -350,21 +350,23 @@ export function ShipmentForm({ onSubmit, allSchoolNames }: ShipmentFormProps) {
                   )}
                 />
                {(shippingMethodValue === 'correios' || shippingMethodValue === 'transportadora') && (
-                <FormField
-                  control={form.control}
-                  name="trackingCode"
-                  render={({ field }) => (
-                    <FormItem className="fade-in-up" style={{ animationDelay: '0ms' }}>
-                      <FormControl>
-                         <div className="relative">
-                          <Hash className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                          <Input placeholder="Código de Rastreio (Opcional)" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
-                        </div>
-                      </FormControl>
-                      <FormMessage className="text-red-400" />
-                    </FormItem>
-                  )}
-                />
+                 <div className="fade-in-up">
+                    <FormField
+                      control={form.control}
+                      name="trackingCode"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                             <div className="relative">
+                              <Hash className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                              <Input placeholder="Código de Rastreio (Opcional)" className="pl-12 h-14 bg-slate-800 border-slate-700" {...field} />
+                            </div>
+                          </FormControl>
+                          <FormMessage className="text-red-400" />
+                        </FormItem>
+                      )}
+                    />
+                 </div>
                )}
               <div className="fade-in-up" style={{ animationDelay: '900ms' }}>
                   <FormControl>
