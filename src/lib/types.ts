@@ -28,4 +28,13 @@ export interface Collection {
   photoDataUri?: string;
 }
 
-export type HistoryItem = Delivery | Collection;
+export interface Visit {
+  id: string;
+  type: 'visit';
+  schoolName: string;
+  schoolAddress: string;
+  createdAt: string; // ISO string
+  synced: boolean;
+}
+
+export type HistoryItem = Delivery | Collection | Visit;

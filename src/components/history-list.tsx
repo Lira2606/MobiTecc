@@ -1,6 +1,6 @@
 'use client';
 
-import type { Delivery, Collection } from '@/lib/types';
+import type { Delivery, Collection, Visit } from '@/lib/types';
 import {
   Card,
   CardContent,
@@ -30,30 +30,58 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { PackageOpen, Truck, Trash2, Eye, Cloud, CloudOff } from 'lucide-react';
+import { PackageOpen, Truck, Trash2, Eye, Cloud, CloudOff, Users } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 
 interface HistoryListProps {
   deliveries: Delivery[];
   collections: Collection[];
+  visits: Visit[];
   onDeleteDelivery: (id: string) => void;
   onDeleteCollection: (id:string) => void;
+  onDeleteVisit: (id:string) => void;
 }
 
-export function HistoryList({ deliveries, collections, onDeleteDelivery, onDeleteCollection }: HistoryListProps) {
+export function HistoryList({ deliveries, collections, visits, onDeleteDelivery, onDeleteCollection, onDeleteVisit }: HistoryListProps) {
   const combinedHistory = [
     ...deliveries.map((d) => ({ ...d, type: 'delivery' as const })),
     ...collections.map((c) => ({ ...c, type: 'collection' as const })),
+    ...visits.map((v) => ({ ...v, type: 'visit' as const })),
   ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   if (combinedHistory.length === 0) {
     return (
       <div className="text-center text-gray-400 mt-10">
         <h3 className="text-xl font-semibold text-white">Nenhum registro encontrado.</h3>
-        <p>Comece adicionando uma nova entrega ou recolhimento.</p>
+        <p>Comece adicionando um novo registro.</p>
       </div>
     );
+  }
+
+  const renderIcon = (type: 'delivery' | 'collection' | 'visit') => {
+    switch (type) {
+      case 'delivery':
+        return <Truck className="w-6 h-6 text-primary" />;
+      case 'collection':
+        return <PackageOpen className="w-6 h-6 text-primary" />;
+      case 'visit':
+        return <Users className="w-6 h-6 text-primary" />;
+    }
+  }
+
+  const handleDelete = (item: typeof combinedHistory[0]) => {
+    switch (item.type) {
+      case 'delivery':
+        onDeleteDelivery(item.id);
+        break;
+      case 'collection':
+        onDeleteCollection(item.id);
+        break;
+      case 'visit':
+        onDeleteVisit(item.id);
+        break;
+    }
   }
 
   return (
@@ -64,11 +92,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
           <Card className="bg-slate-800 border-slate-700 text-white flex flex-col">
             <CardHeader>
               <CardTitle className="flex items-center gap-3">
-                {item.type === 'delivery' ? (
-                  <Truck className="w-6 h-6 text-primary" />
-                ) : (
-                  <PackageOpen className="w-6 h-6 text-primary" />
-                )}
+                {renderIcon(item.type)}
                 <span className="truncate flex-1">{item.schoolName}</span>
                  {item.synced ? (
                   <Cloud className="w-5 h-5 text-green-400" title="Sincronizado" />
@@ -87,17 +111,21 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
               </CardDescription>
             </CardHeader>
             <CardContent className="flex-grow">
-               <p className="text-sm text-slate-300">
-                <span className="font-semibold">Item:</span> {item.item}
-              </p>
-              <p className="text-sm text-slate-300">
-                <span className="font-semibold">Responsável:</span> {item.responsibleParty}
-              </p>
-              {item.department && (
+               {item.type !== 'visit' && 'item' in item && (
                  <p className="text-sm text-slate-300">
-                  <span className="font-semibold">Secretaria:</span> {item.department}
+                  <span className="font-semibold">Item:</span> {item.item}
                 </p>
-              )}
+               )}
+               {item.type !== 'visit' && 'responsibleParty' in item && (
+                  <p className="text-sm text-slate-300">
+                    <span className="font-semibold">Responsável:</span> {item.responsibleParty}
+                  </p>
+               )}
+               {item.type === 'visit' && 'schoolAddress' in item && (
+                  <p className="text-sm text-slate-300">
+                    <span className="font-semibold">Endereço:</span> {item.schoolAddress}
+                  </p>
+                )}
             </CardContent>
             <CardFooter className="flex justify-end gap-2 p-4">
               <DialogTrigger asChild>
@@ -122,7 +150,7 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => item.type === 'delivery' ? onDeleteDelivery(item.id) : onDeleteCollection(item.id)}>
+                    <AlertDialogAction onClick={() => handleDelete(item)}>
                       Continuar
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -133,15 +161,11 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
            <DialogContent className="bg-slate-800 border-slate-700 text-white">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-3">
-                 {item.type === 'delivery' ? (
-                  <Truck className="w-6 h-6 text-primary" />
-                ) : (
-                  <PackageOpen className="w-6 h-6 text-primary" />
-                )}
+                 {renderIcon(item.type)}
                 {item.schoolName}
               </DialogTitle>
               <DialogDescription>
-                Detalhes do registro de {item.type === 'delivery' ? 'entrega' : 'recolhimento'}.
+                Detalhes do registro de {item.type === 'delivery' ? 'entrega' : item.type === 'collection' ? 'recolhimento' : 'visita'}.
                  <span className={cn('ml-2 text-xs font-bold', item.synced ? 'text-green-400' : 'text-gray-500')}>
                   ({item.synced ? 'Salvo na nuvem' : 'Pendente de envio'})
                 </span>
@@ -149,23 +173,31 @@ export function HistoryList({ deliveries, collections, onDeleteDelivery, onDelet
             </DialogHeader>
             <div className="space-y-2 py-4">
               <p><span className="font-semibold">Data:</span> {new Date(item.createdAt).toLocaleString('pt-BR')}</p>
-              <p><span className="font-semibold">Item:</span> {item.item}</p>
-              <p><span className="font-semibold">Responsável:</span> {item.responsibleParty}</p>
-              <p><span className="font-semibold">Função:</span> {item.role}</p>
-              {item.department && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}
-              <p><span className="font-semibold">Telefone:</span> {item.phoneNumber}</p>
-              {item.observations && <p><span className="font-semibold">Observações:</span> {item.observations}</p>}
-              {item.photoDataUri && (
-                <div className="mt-4">
-                  <p className="font-semibold mb-2">Foto:</p>
-                  <Image
-                    src={item.photoDataUri}
-                    alt="Foto do registro"
-                    width={500}
-                    height={500}
-                    className="rounded-lg object-contain"
-                  />
-                </div>
+              {item.type === 'visit' ? (
+                <>
+                  <p><span className="font-semibold">Endereço:</span> {item.schoolAddress}</p>
+                </>
+              ) : (
+                <>
+                  <p><span className="font-semibold">Item:</span> {item.item}</p>
+                  <p><span className="font-semibold">Responsável:</span> {item.responsibleParty}</p>
+                  <p><span className="font-semibold">Função:</span> {item.role}</p>
+                  {item.department && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}
+                  <p><span className="font-semibold">Telefone:</span> {item.phoneNumber}</p>
+                  {item.observations && <p><span className="font-semibold">Observações:</span> {item.observations}</p>}
+                  {item.photoDataUri && (
+                    <div className="mt-4">
+                      <p className="font-semibold mb-2">Foto:</p>
+                      <Image
+                        src={item.photoDataUri}
+                        alt="Foto do registro"
+                        width={500}
+                        height={500}
+                        className="rounded-lg object-contain"
+                      />
+                    </div>
+                  )}
+                </>
               )}
             </div>
              <DialogClose asChild>

@@ -2,12 +2,13 @@
 
 import { useState, useMemo } from 'react';
 import { useLocalStorage } from '@/hooks/use-local-storage';
-import type { Delivery, Collection, HistoryItem } from '@/lib/types';
+import type { Delivery, Collection, Visit, HistoryItem } from '@/lib/types';
 import { DeliveryForm } from './delivery-form';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList, Bot, ClipboardCopy, Loader2, Send } from 'lucide-react';
 import { CollectionForm } from './collection-form';
+import { VisitForm } from './visit-form';
 import { cn } from '@/lib/utils';
 import { Header } from './header';
 import { HistoryList } from './history-list';
@@ -29,6 +30,7 @@ export function DeliveryManager() {
   const [activeTab, setActiveTab] = useState<'deliveries' | 'collections' | 'visits' | 'shipments' | 'history'>('deliveries');
   const [deliveries, setDeliveries] = useLocalStorage<Delivery[]>('deliveries', []);
   const [collections, setCollections] = useLocalStorage<Collection[]>('collections', []);
+  const [visits, setVisits] = useLocalStorage<Visit[]>('visits', []);
   const [lastItem, setLastItem] = useState<HistoryItem | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -38,8 +40,9 @@ export function DeliveryManager() {
   const unsyncedCount = useMemo(() => {
     const unsyncedDeliveries = deliveries.filter(d => !d.synced).length;
     const unsyncedCollections = collections.filter(c => !c.synced).length;
-    return unsyncedDeliveries + unsyncedCollections;
-  }, [deliveries, collections]);
+    const unsyncedVisits = visits.filter(v => !v.synced).length;
+    return unsyncedDeliveries + unsyncedCollections + unsyncedVisits;
+  }, [deliveries, collections, visits]);
 
   const handleSync = () => {
     if (!isOnline) {
@@ -68,6 +71,7 @@ export function DeliveryManager() {
     setTimeout(() => {
       setDeliveries(prev => prev.map(d => ({ ...d, synced: true })));
       setCollections(prev => prev.map(c => ({ ...c, synced: true })));
+      setVisits(prev => prev.map(v => ({...v, synced: true})));
       toast({
         title: 'Sucesso!',
         description: 'Todos os registros foram salvos na nuvem.',
@@ -76,7 +80,7 @@ export function DeliveryManager() {
   };
 
 
-  const handleAddDelivery = (newDeliveryData: Omit<Delivery, 'id' | 'createdAt' | 'synced'>) => {
+  const handleAddDelivery = (newDeliveryData: Omit<Delivery, 'id' | 'createdAt' | 'synced' | 'type'>) => {
     const newDelivery: Delivery = {
       ...newDeliveryData,
       id: new Date().toISOString() + Math.random(),
@@ -89,7 +93,7 @@ export function DeliveryManager() {
     setShowSuccess(true);
   };
 
-  const handleAddCollection = (newCollectionData: Omit<Collection, 'id' | 'createdAt' | 'synced'>) => {
+  const handleAddCollection = (newCollectionData: Omit<Collection, 'id' | 'createdAt' | 'synced' | 'type'>) => {
     const newCollection: Collection = {
       ...newCollectionData,
       id: new Date().toISOString() + Math.random(),
@@ -99,6 +103,19 @@ export function DeliveryManager() {
     };
     setCollections(prev => [newCollection, ...prev]);
     setLastItem(newCollection);
+    setShowSuccess(true);
+  };
+  
+  const handleAddVisit = (newVisitData: Omit<Visit, 'id' | 'createdAt' | 'synced' | 'type'>) => {
+    const newVisit: Visit = {
+      ...newVisitData,
+      id: new Date().toISOString() + Math.random(),
+      createdAt: new Date().toISOString(),
+      synced: isOnline,
+      type: 'visit',
+    };
+    setVisits(prev => [newVisit, ...prev]);
+    setLastItem(newVisit);
     setShowSuccess(true);
   };
 
@@ -111,12 +128,19 @@ export function DeliveryManager() {
     setCollections(prev => prev.filter(c => c.id !== id));
     toast({ title: "Recolhimento excluído com sucesso!" });
   };
+  
+  const handleDeleteVisit = (id: string) => {
+    setVisits(prev => prev.filter(v => v.id !== id));
+    toast({ title: "Visita excluída com sucesso!" });
+  };
+
 
   const allSchoolNames = useMemo(() => {
     const deliverySchools = deliveries.map(d => d.schoolName);
     const collectionSchools = collections.map(c => c.schoolName);
-    return [...new Set([...deliverySchools, ...collectionSchools])];
-  }, [deliveries, collections]);
+    const visitSchools = visits.map(v => v.schoolName);
+    return [...new Set([...deliverySchools, ...collectionSchools, ...visitSchools])];
+  }, [deliveries, collections, visits]);
   
   const resetForm = () => {
     setShowSuccess(false);
@@ -134,11 +158,18 @@ export function DeliveryManager() {
       case 'collections':
         return <CollectionForm onSubmit={handleAddCollection} allSchoolNames={allSchoolNames} />;
       case 'visits':
-        return <div className="text-white text-center mt-10">Visitas - Em breve</div>;
+        return <VisitForm onSubmit={handleAddVisit} allSchoolNames={allSchoolNames} />;
       case 'shipments':
         return <div className="text-white text-center mt-10">Envios - Em breve</div>;
       case 'history':
-        return <HistoryList deliveries={deliveries} collections={collections} onDeleteDelivery={handleDeleteDelivery} onDeleteCollection={handleDeleteCollection} />;
+        return <HistoryList 
+                  deliveries={deliveries} 
+                  collections={collections} 
+                  visits={visits}
+                  onDeleteDelivery={handleDeleteDelivery} 
+                  onDeleteCollection={handleDeleteCollection} 
+                  onDeleteVisit={handleDeleteVisit}
+                />;
       default:
         return null;
     }
@@ -197,6 +228,15 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
     const [dialogOpen, setDialogOpen] = useState(false);
 
     const handleGenerateMessage = async () => {
+        if (lastItem.type === 'visit') {
+            toast({
+                variant: 'destructive',
+                title: 'Ação não disponível',
+                description: 'Não é possível gerar mensagem para registros de visita.',
+            });
+            return;
+        }
+
         setIsGenerating(true);
         setTelegramLink('');
         
@@ -241,7 +281,7 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
                 <h2 className="text-3xl font-bold text-white mb-2 fade-in-up" style={{animationDelay: '100ms'}}>Registrado!</h2>
                 <p className="text-gray-400 text-center mb-4 fade-in-up" style={{animationDelay: '200ms'}}>Os detalhes foram guardados com sucesso.</p>
                 <div className="w-full space-y-3 mt-4 fade-in-up" style={{animationDelay: '300ms'}}>
-                    <Button onClick={handleGenerateMessage} disabled={isGenerating} variant="outline" className="w-full bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border-sky-500/30 hover:text-sky-200">
+                    <Button onClick={handleGenerateMessage} disabled={isGenerating || lastItem.type === 'visit'} variant="outline" className="w-full bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border-sky-500/30 hover:text-sky-200">
                          {isGenerating ? <Loader2 className="animate-spin" /> : '✨ Gerar Mensagem'}
                     </Button>
                 </div>
