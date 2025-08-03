@@ -4,7 +4,7 @@ export function SplashScreen() {
   return (
     <div className="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center z-50">
       <svg
-        className="w-20 h-20 text-teal-400 animated-logo"
+        className="w-20 h-20 text-teal-400 splash-logo"
         viewBox="0 0 64 64"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
