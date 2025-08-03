@@ -30,7 +30,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { PackageOpen, Truck, Trash2, Eye, Cloud, CloudOff, Users } from 'lucide-react';
+import { PackageOpen, Truck, Trash2, Eye, Cloud, CloudOff, Users, Map } from 'lucide-react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useState, useMemo } from 'react';
@@ -59,6 +59,22 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
     if (filter === 'all') return combinedHistory;
     return combinedHistory.filter(item => item.type === filter);
   }, [combinedHistory, filter]);
+
+  const handleOpenRouteMap = () => {
+    const visitAddresses = visits.map(v => encodeURIComponent(v.schoolAddress));
+    if (visitAddresses.length === 0) return;
+
+    // Use o primeiro como destino e o resto como waypoints
+    const destination = visitAddresses[0];
+    const waypoints = visitAddresses.slice(1).join('|');
+    
+    let url = `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+    if (waypoints) {
+      url += `&waypoints=${waypoints}`;
+    }
+
+    window.open(url, '_blank');
+  };
 
 
   if (combinedHistory.length === 0) {
@@ -97,7 +113,14 @@ export function HistoryList({ deliveries, collections, visits, onDeleteDelivery,
 
   return (
     <div className="space-y-4">
-      <h2 className="text-3xl font-bold text-white">Histórico de Registros</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-bold text-white">Histórico de Registros</h2>
+        {filter === 'visit' && visits.length > 0 && (
+          <Button onClick={handleOpenRouteMap} size="sm" variant="outline" className="bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border-orange-500/30 hover:text-orange-200">
+            <Map className="mr-2 h-4 w-4" /> Ver Rota
+          </Button>
+        )}
+      </div>
        <Tabs defaultValue="all" onValueChange={(value) => setFilter(value as any)} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="all">Todos</TabsTrigger>
