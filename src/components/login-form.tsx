@@ -17,7 +17,6 @@ import { useAuth } from '@/context/auth-context';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
-import { SplashScreen } from './splash-screen';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Por favor, insira um email válido.' }),
@@ -28,8 +27,7 @@ type LoginFormValues = z.infer<typeof formSchema>;
 
 export function LoginForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
-  const [showLogin, setShowLogin] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -45,16 +43,11 @@ export function LoginForm() {
   });
 
   useEffect(() => {
-    const splashTimer = setTimeout(() => {
-      setShowSplash(false);
-      setShowLogin(true);
-    }, 7000); // Duration of the splash animation
-
-    return () => clearTimeout(splashTimer);
+    setIsMounted(true);
   }, []);
   
   useEffect(() => {
-    if (!showLogin || !canvasRef.current) return;
+    if (!isMounted || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -137,7 +130,7 @@ export function LoginForm() {
       window.removeEventListener('resize', setCanvasDimensions);
     }
 
-  }, [showLogin]);
+  }, [isMounted]);
 
 
   const handleSubmit = async (data: LoginFormValues) => {
@@ -155,13 +148,9 @@ export function LoginForm() {
     }
   };
 
-  if (showSplash) {
-    return <SplashScreen />;
-  }
-
   return (
     <div className="flex-1 flex flex-col items-center justify-center w-full h-full relative">
-      <div className={cn("flex-1 flex flex-col items-center justify-center p-8 w-full", showLogin ? 'login-screen-loaded' : 'opacity-0')}>
+      <div className={cn("flex-1 flex flex-col items-center justify-center p-8 w-full", isMounted ? 'login-screen-loaded' : 'opacity-0')}>
         <canvas id="particle-canvas" ref={canvasRef} className="absolute top-0 left-0 w-full h-full z-0"></canvas>
         
         <div className="login-element text-center mb-8 floating-icon">
