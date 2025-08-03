@@ -6,7 +6,7 @@ import type { Delivery, Collection, Visit, HistoryItem } from '@/lib/types';
 import { DeliveryForm } from './delivery-form';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList, Bot, ClipboardCopy, Loader2, Send } from 'lucide-react';
+import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList, Bot, ClipboardCopy, Loader2, Send, Map } from 'lucide-react';
 import { CollectionForm } from './collection-form';
 import { VisitForm } from './visit-form';
 import { cn } from '@/lib/utils';
@@ -272,6 +272,13 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
         });
     };
 
+    const handleOpenMap = () => {
+      if (lastItem.type !== 'visit') return;
+      const address = encodeURIComponent(lastItem.schoolAddress);
+      const url = `https://www.google.com/maps/search/?api=1&query=${address}`;
+      window.open(url, '_blank');
+    }
+
     return (
         <>
             <div className="flex flex-col items-center justify-center p-8 text-center h-full">
@@ -284,6 +291,11 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
                     <Button onClick={handleGenerateMessage} disabled={isGenerating || lastItem.type === 'visit'} variant="outline" className="w-full bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border-sky-500/30 hover:text-sky-200">
                          {isGenerating ? <Loader2 className="animate-spin" /> : '✨ Gerar Mensagem'}
                     </Button>
+                    {lastItem.type === 'visit' && (
+                       <Button onClick={handleOpenMap} variant="outline" className="w-full bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border-orange-500/30 hover:text-orange-200">
+                         <Map className="mr-2"/> Ver no Mapa
+                      </Button>
+                    )}
                 </div>
                 <Button onClick={onNewRecord} className="mt-6 bg-slate-700 hover:bg-slate-600 text-white font-bold fade-in-up" style={{animationDelay: '400ms'}}>
                     Novo Registro
