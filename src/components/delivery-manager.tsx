@@ -208,7 +208,7 @@ export function DeliveryManager() {
 
   const getButtonClass = (tabName: 'deliveries' | 'collections' | 'visits' | 'shipments' | 'history' | 'profile' | 'tasks') => {
     return cn(
-      "flex flex-col items-center transition-transform duration-200 nav-link w-1/6",
+      "flex flex-col items-center transition-transform duration-200 nav-link flex-1",
        activeTab === tabName ? 'text-green-400' : 'text-white'
     );
   };
@@ -232,6 +232,14 @@ export function DeliveryManager() {
             <button onClick={() => { setActiveTab('collections'); resetForm(); }} className={getButtonClass('collections')}>
                 <PackageOpen className="w-6 h-6 mb-1" />
                 <span className="text-xs font-medium">Recolhas</span>
+            </button>
+             <button onClick={() => { setActiveTab('visits'); resetForm(); }} className={getButtonClass('visits')}>
+                <Users className="w-6 h-6 mb-1" />
+                <span className="text-xs font-medium">Visitas</span>
+            </button>
+             <button onClick={() => { setActiveTab('shipments'); resetForm(); }} className={getButtonClass('shipments')}>
+                <Plane className="w-6 h-6 mb-1" />
+                <span className="text-xs font-medium">Envios</span>
             </button>
             <button onClick={() => { setActiveTab('tasks'); resetForm(); }} className={getButtonClass('tasks')}>
                 <ClipboardCheck className="w-6 h-6 mb-1" />
