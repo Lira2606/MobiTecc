@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+// import { auth } from '@/lib/firebase'; // Prepared for future Firebase connection
 
 interface User {
   id: string;
