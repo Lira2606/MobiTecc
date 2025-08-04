@@ -9,7 +9,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import {
@@ -158,11 +157,11 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
 
   return (
     <>
-      <div>
-        <h2 className="text-3xl font-bold text-white fade-in-up" style={{ animationDelay: '100ms' }}>
+      <div className="space-y-5">
+        <h2 className="text-3xl font-bold text-white">
           Novo Recolhimento
         </h2>
-        <p className="text-gray-400 mt-2 mb-8 fade-in-up" style={{ animationDelay: '200ms' }}>
+        <p className="text-gray-400 mt-2 mb-8">
           Preencha os detalhes para registrar um recolhimento.
         </p>
         <Form {...form}>
@@ -171,7 +170,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 control={form.control}
                 name="department"
                 render={({ field }) => (
-                  <FormItem className="fade-in-up" style={{ animationDelay: '300ms' }}>
+                  <FormItem>
                     <FormControl>
                       <div className="relative">
                         <Building className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -186,7 +185,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 control={form.control}
                 name="schoolName"
                 render={({ field }) => (
-                  <FormItem className="fade-in-up" style={{ animationDelay: '400ms' }}>
+                  <FormItem>
                     <FormControl>
                       <div className="relative">
                         <Home className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -201,7 +200,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 control={form.control}
                 name="item"
                 render={({ field }) => (
-                  <FormItem className="fade-in-up" style={{ animationDelay: '500ms' }}>
+                  <FormItem>
                     <FormControl>
                       <div className="relative">
                         <Package className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 z-10" />
@@ -227,7 +226,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 control={form.control}
                 name="responsibleParty"
                 render={({ field }) => (
-                  <FormItem className="fade-in-up" style={{ animationDelay: '600ms' }}>
+                  <FormItem>
                     <FormControl>
                       <div className="relative">
                         <User className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -242,7 +241,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 control={form.control}
                 name="role"
                 render={({ field }) => (
-                  <FormItem className="fade-in-up" style={{ animationDelay: '700ms' }}>
+                  <FormItem>
                     <FormControl>
                       <div className="relative">
                         <Briefcase className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -257,7 +256,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 control={form.control}
                 name="phoneNumber"
                 render={({ field }) => (
-                  <FormItem className="fade-in-up" style={{ animationDelay: '800ms' }}>
+                  <FormItem>
                     <FormControl>
                        <div className="relative">
                         <Phone className="w-5 h-5 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
@@ -269,7 +268,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                 )}
               />
 
-              <div className="fade-in-up" style={{ animationDelay: '900ms' }}>
+              <div>
                   <FormControl>
                     <input
                       type="file"
@@ -343,7 +342,7 @@ export function CollectionForm({ onSubmit }: CollectionFormProps) {
                   )}
               </div>
 
-            <div className="pt-4 fade-in-up" style={{ animationDelay: '1000ms' }}>
+            <div className="pt-4">
               <Button type="submit" disabled={isSubmitting} className="w-full bg-gradient-to-r from-primary to-green-500 hover:from-primary/90 hover:to-green-500/90 text-white font-bold py-3 h-auto px-4 rounded-lg shadow-lg hover:shadow-primary/50 transform hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center text-base">
                 {isSubmitting ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
