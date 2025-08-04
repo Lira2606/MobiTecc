@@ -6,7 +6,7 @@ import type { Delivery, Collection, Visit, Shipment, HistoryItem } from '@/lib/t
 import { DeliveryForm } from './delivery-form';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList, Bot, ClipboardCopy, Loader2, Send, Map, User } from 'lucide-react';
+import { Truck, PackageOpen, Users, Plane, CheckCircle2, ClipboardList, Bot, ClipboardCopy, Loader2, Send, Map, User, ClipboardCheck } from 'lucide-react';
 import { CollectionForm } from './collection-form';
 import { VisitForm } from './visit-form';
 import { ShipmentForm } from './shipment-form';
@@ -26,10 +26,11 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { ProfilePage } from './profile-page';
+import { TaskList } from './task-list';
 
 
 export function DeliveryManager() {
-  const [activeTab, setActiveTab] = useState<'deliveries' | 'collections' | 'visits' | 'shipments' | 'history' | 'profile'>('deliveries');
+  const [activeTab, setActiveTab] = useState<'deliveries' | 'collections' | 'visits' | 'shipments' | 'history' | 'profile' | 'tasks'>('deliveries');
   const [deliveries, setDeliveries] = useLocalStorage<Delivery[]>('deliveries', []);
   const [collections, setCollections] = useLocalStorage<Collection[]>('collections', []);
   const [visits, setVisits] = useLocalStorage<Visit[]>('visits', []);
@@ -185,6 +186,8 @@ export function DeliveryManager() {
         return <VisitForm onSubmit={handleAddVisit} allSchoolNames={allSchoolNames} />;
       case 'shipments':
         return <ShipmentForm onSubmit={handleAddShipment} allSchoolNames={allSchoolNames} />;
+      case 'tasks':
+        return <TaskList />;
       case 'history':
         return <HistoryList 
                   deliveries={deliveries} 
@@ -203,9 +206,9 @@ export function DeliveryManager() {
     }
   }
 
-  const getButtonClass = (tabName: 'deliveries' | 'collections' | 'visits' | 'shipments' | 'history' | 'profile') => {
+  const getButtonClass = (tabName: 'deliveries' | 'collections' | 'visits' | 'shipments' | 'history' | 'profile' | 'tasks') => {
     return cn(
-      "flex flex-col items-center transition-transform duration-200 nav-link",
+      "flex flex-col items-center transition-transform duration-200 nav-link w-1/6",
        activeTab === tabName ? 'text-green-400' : 'text-white'
     );
   };
@@ -223,27 +226,23 @@ export function DeliveryManager() {
         
         <nav className="glassmorphism flex justify-around items-center p-3 mt-auto w-full z-10">
             <button onClick={() => { setActiveTab('deliveries'); resetForm(); }} className={getButtonClass('deliveries')}>
-                <Truck className="w-7 h-7 mb-1" />
+                <Truck className="w-6 h-6 mb-1" />
                 <span className="text-xs font-medium">Entregas</span>
             </button>
             <button onClick={() => { setActiveTab('collections'); resetForm(); }} className={getButtonClass('collections')}>
-                <PackageOpen className="w-7 h-7 mb-1" />
-                <span className="text-xs font-medium">Recolhimentos</span>
+                <PackageOpen className="w-6 h-6 mb-1" />
+                <span className="text-xs font-medium">Recolhas</span>
             </button>
-            <button onClick={() => { setActiveTab('visits'); resetForm(); }} className={getButtonClass('visits')}>
-                <Users className="w-7 h-7 mb-1" />
-                <span className="text-xs font-medium">Visitas</span>
+            <button onClick={() => { setActiveTab('tasks'); resetForm(); }} className={getButtonClass('tasks')}>
+                <ClipboardCheck className="w-6 h-6 mb-1" />
+                <span className="text-xs font-medium">Tarefas</span>
             </button>
-            <button onClick={() => { setActiveTab('shipments'); resetForm(); }} className={getButtonClass('shipments')}>
-                <Plane className="w-7 h-7 mb-1" />
-                <span className="text-xs font-medium">Envios</span>
-            </button>
-             <button onClick={() => { setActiveTab('history'); resetForm(); }} className={getButtonClass('history')}>
-                <ClipboardList className="w-7 h-7 mb-1" />
+            <button onClick={() => { setActiveTab('history'); resetForm(); }} className={getButtonClass('history')}>
+                <ClipboardList className="w-6 h-6 mb-1" />
                 <span className="text-xs font-medium">Registros</span>
             </button>
             <button onClick={() => { setActiveTab('profile'); resetForm(); }} className={getButtonClass('profile')}>
-                <User className="w-7 h-7 mb-1" />
+                <User className="w-6 h-6 mb-1" />
                 <span className="text-xs font-medium">Perfil</span>
             </button>
         </nav>
@@ -365,5 +364,3 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
         </>
     );
 }
-
-    
