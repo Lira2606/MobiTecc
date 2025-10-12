@@ -337,7 +337,7 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
             </div>
 
             <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-                <AlertDialogContent>
+                <AlertDialogContent className="w-[95%]">
                     <AlertDialogHeader>
                         <AlertDialogTitle className="flex items-center gap-2">
                            <Bot className="text-primary" /> Mensagem Gerada
@@ -346,7 +346,7 @@ function SuccessScreen({ onNewRecord, lastItem }: { onNewRecord: () => void, las
                             Abaixo está o conteúdo gerado pela IA. Você pode copiá-lo para usar onde precisar.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <div className="my-4 p-4 bg-slate-700/50 rounded-md text-sm text-slate-200 whitespace-pre-wrap">
+                    <div className="my-4 p-4 bg-slate-700/50 rounded-md text-sm text-slate-200 whitespace-pre-wrap break-words">
                         {generatedContent}
                     </div>
                     <AlertDialogFooter>
