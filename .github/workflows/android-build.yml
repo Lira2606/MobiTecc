@@ -1,0 +1,42 @@
+name: Build Android APK (debug)
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Try export (may fail) and prepare Capacitor
+        run: |
+          npm run mobile:export || true
+          npx cap copy || true
+
+      - name: Build Android (Gradle)
+        working-directory: android
+        run: |
+          chmod +x gradlew || true
+          ./gradlew assembleDebug --no-daemon --console=plain
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk

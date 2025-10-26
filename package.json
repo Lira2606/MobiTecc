@@ -9,7 +9,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "mobile:cap:init": "npx @capacitor/cli@5.6.5 init MobiTec com.lira.mobitec --webDir=out",
+    "mobile:cap:add-android": "npx cap add android",
+    "mobile:cap:copy": "npx cap copy",
+    "mobile:cap:open-android": "npx cap open android",
+    "mobile:serve": "next start -p 3000",
+    "mobile:export": "next build && next export -o out"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.14.1",
@@ -57,6 +63,8 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@capacitor/android": "^7.4.4",
+    "@capacitor/cli": "^7.4.4",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
