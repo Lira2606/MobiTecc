@@ -1,0 +1,31 @@
+name: "npm audit"
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch: {}
+
+jobs:
+  audit:
+    name: NPM Audit (production deps)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies (production only)
+        run: |
+          npm ci --omit=dev
+
+      - name: Run npm audit
+        run: |
+          npm audit --production || true
+        # we don't fail the workflow automatically here so maintainers can review results in the logs
