@@ -25,7 +25,7 @@ const formSchema = z.object({
 
 type LoginFormValues = z.infer<typeof formSchema>;
 
-export function LoginForm() {
+export function LoginForm({ onSwitchToRegister, onSwitchToForgotPassword }: { onSwitchToRegister: () => void, onSwitchToForgotPassword: () => void }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -186,7 +186,7 @@ export function LoginForm() {
                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
                                   <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
                                 </span>
-                                <Input {...field} type="email" placeholder="E-mail" className="w-full pl-11 pr-4 py-3 h-auto glass-effect rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-75" />
+                                <Input {...field} type="email" placeholder="E-mail" className="w-full pl-11 pr-4 py-3 h-auto bg-transparent rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-75" />
                             </div>
                         </FormControl>
                           <FormMessage className="text-red-400 pl-2" />
@@ -197,7 +197,7 @@ export function LoginForm() {
 
               <div className="login-element">
                   <div className="flex justify-end mb-1">
-                      <a href="#" className="text-sm text-teal-400 hover:text-teal-300 transition">Esqueceu a senha?</a>
+                      <button type="button" onClick={onSwitchToForgotPassword} className="text-sm text-teal-400 hover:text-teal-300 transition">Esqueceu a senha?</button>
                   </div>
                   <FormField
                     control={form.control}
@@ -209,7 +209,7 @@ export function LoginForm() {
                                 <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
                                     <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
                                 </span>
-                                <Input {...field} type={passwordVisible ? 'text' : 'password'} placeholder="Senha" className="w-full pl-11 pr-10 py-3 h-auto glass-effect rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-75" />
+                                <Input {...field} type={passwordVisible ? 'text' : 'password'} placeholder="Senha" className="w-full pl-11 pr-10 py-3 h-auto bg-transparent rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-opacity-75" />
                                 <button type="button" onClick={() => setPasswordVisible(!passwordVisible)} className="absolute inset-y-0 right-0 flex items-center pr-3 group">
                                     {passwordVisible ? <EyeOff className="h-5 w-5 text-gray-400 group-hover:text-white transition" /> : <Eye className="h-5 w-5 text-gray-400 group-hover:text-white transition" />}
                                 </button>
@@ -248,7 +248,7 @@ export function LoginForm() {
         </div>
 
         <div className="login-element w-full z-10"><p className="text-center text-gray-400 text-sm mt-8">
-            Não tem uma conta? <a href="#" className="text-teal-400 hover:text-teal-300 font-medium transition">Cadastre-se</a>
+            Não tem uma conta? <button onClick={onSwitchToRegister} className="text-teal-400 hover:text-teal-300 font-medium transition">Cadastre-se</button>
         </p></div>
       </div>
     </div>

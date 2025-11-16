@@ -1,14 +1,11 @@
 'use client';
 
-import { useAuth } from '@/context/auth-context';
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/auth-context';
+import { Sidebar } from '@/components/ui/sidebar';
 
-export default function AppLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
@@ -19,8 +16,16 @@ export default function AppLayout({
   }, [isAuthenticated, isLoading, router]);
 
   if (isLoading || !isAuthenticated) {
-    return null; // or a loading spinner
+    // You can return a loading spinner or null here
+    return null;
   }
 
-  return <>{children}</>;
+  return (
+    <div className="flex w-full h-full">
+      <Sidebar />
+      <main className="flex-1 flex flex-col h-full bg-gray-800 overflow-y-auto">
+        {children}
+      </main>
+    </div>
+  );
 }

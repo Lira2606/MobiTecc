@@ -38,12 +38,12 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
-  /* Corrige o fundo branco no autopreenchimento do navegador */
+  /* Força a cor de fundo correta no autopreenchimento do navegador */
   input:-webkit-autofill,
   input:-webkit-autofill:hover, 
   input:-webkit-autofill:focus, 
   input:-webkit-autofill:active {
-    -webkit-box-shadow: 0 0 0 30px hsl(var(--muted)) inset !important;
+    -webkit-box-shadow: 0 0 0 100px hsl(var(--muted)) inset !important;
     -webkit-text-fill-color: hsl(var(--foreground)) !important;
     caret-color: hsl(var(--foreground));
   }
@@ -63,10 +63,8 @@
       overflow: hidden;
   }
   .glass-effect {
-      background-color: rgba(30, 41, 59, 0.5); /* slate-800 com 50% de opacidade */
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(55, 65, 81, 0.3); /* gray-700 com 30% de opacidade */
+      background-color: hsl(var(--muted));
+      border: 1px solid rgba(55, 65, 81, 0.3);
   }
 }
 

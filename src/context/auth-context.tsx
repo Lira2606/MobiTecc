@@ -1,88 +1,105 @@
 'use client';
 
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-}
+// localStorage keys
+const USERS_STORAGE_KEY = 'mobitec_users';
+const SESSION_STORAGE_KEY = 'mobitec_session';
 
 interface AuthContextType {
+  user: any | null;
   isAuthenticated: boolean;
-  user: User | null;
-  login: (email: string, pass: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  isLoading: boolean;
+  register: (data: any) => Promise<void>;
+  sendVerificationCode: (phone: string) => Promise<void>;
+  confirmVerificationCode: (code: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper to get users from localStorage
+const getLocalUsers = () => {
+  if (typeof window === 'undefined') return [];
+  const users = localStorage.getItem(USERS_STORAGE_KEY);
+  return users ? JSON.parse(users) : [];
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<any | null>(null);
   const router = useRouter();
 
+  // Check for an active session on component mount
   useEffect(() => {
-    // Simulate checking for a stored session
-    const checkSession = async () => {
-      setIsLoading(true);
-      try {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
-        }
-      } catch (error) {
-        console.error("Failed to parse user from localStorage", error);
-        setUser(null);
-        localStorage.removeItem('user');
-      } finally {
-        setIsLoading(false);
+    if (typeof window === 'undefined') return;
+    const sessionEmail = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (sessionEmail) {
+      const users = getLocalUsers();
+      const loggedInUser = users.find((u: any) => u.email === sessionEmail);
+      if (loggedInUser) {
+        setUser(loggedInUser);
       }
-    };
-    checkSession();
+    }
   }, []);
-  
 
-  const login = async (email: string, pass: string) => {
-    // Simulate API call
-    return new Promise<void>((resolve, reject) => {
-       setTimeout(() => {
-        if (email === 'admin@mobitec.com' && pass === 'admin') {
-            const userData: User = { 
-                id: '1', 
-                name: 'Admin MobiTec', 
-                email: 'admin@mobitec.com',
-                avatar: 'https://placehold.co/112x112.png',
-            };
-            setUser(userData);
-            localStorage.setItem('user', JSON.stringify(userData));
-            router.push('/app');
-            resolve();
-        } else {
-            reject(new Error('Credenciais inválidas.'));
-        }
-       }, 1000);
-    });
+  const login = async (email: string, password: string) => {
+    const users = getLocalUsers();
+    const foundUser = users.find((u: any) => u.email === email && u.password === password);
+
+    if (foundUser) {
+      localStorage.setItem(SESSION_STORAGE_KEY, foundUser.email);
+      setUser(foundUser);
+      router.push('/app');
+    } else {
+      throw new Error('Email ou senha inválidos.');
+    }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
+  const register = async (data: any) => {
+    const { name, email, password } = data;
+    const users = getLocalUsers();
+    const userExists = users.some((u: any) => u.email === email);
+
+    if (userExists) {
+      throw new Error('Este endereço de e-mail já está em uso.');
+    }
+
+    users.push({ name, email, password });
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
     router.push('/login');
   };
 
-  const value = {
-    isAuthenticated: !!user,
-    user,
-    login,
-    logout,
-    isLoading,
+  const logout = async () => {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+    setUser(null);
+    router.push('/login');
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  // Phone verification is not applicable for local storage auth
+  const sendVerificationCode = async (phone: string) => {
+    console.warn('Phone verification is not applicable for local storage auth.');
+    throw new Error('Verificação por telefone não está disponível no modo offline.');
+  };
+
+  const confirmVerificationCode = async (code: string) => {
+    console.warn('Phone verification is not applicable for local storage auth.');
+    throw new Error('Verificação por telefone não está disponível no modo offline.');
+  }
+
+  return (
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated: !!user,
+      login,
+      logout,
+      register,
+      sendVerificationCode,
+      confirmVerificationCode,
+    }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

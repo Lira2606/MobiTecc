@@ -30,12 +30,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { PackageOpen, Truck, Trash2, Eye, Cloud, CloudOff, Users, Map, Plane } from 'lucide-react';
-import Image from 'next/image';
+import { PackageOpen, Truck, Trash2, Eye, Cloud, CloudOff, Users, Map, Plane, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useState, useMemo } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-
+import { useState, useMemo, useRef, createRef, useEffect } from 'react';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface HistoryListProps {
   deliveries: Delivery[];
@@ -49,7 +49,21 @@ interface HistoryListProps {
 }
 
 export function HistoryList({ deliveries, collections, visits, shipments, onDeleteDelivery, onDeleteCollection, onDeleteVisit, onDeleteShipment }: HistoryListProps) {
-  const [filter, setFilter] = useState<'all' | 'delivery' | 'collection' | 'visit' | 'shipment'>('all');
+  type FilterType = 'all' | 'delivery' | 'collection' | 'visit' | 'shipment';
+  const [filter, setFilter] = useState<FilterType>('all');
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState<string | null>(null);
+
+  useEffect(() => {
+    const savedFilter = localStorage.getItem('history_filter') as FilterType;
+    if (savedFilter) {
+      setFilter(savedFilter);
+    }
+  }, []);
+
+  const handleFilterChange = (newFilter: FilterType) => {
+    setFilter(newFilter);
+    localStorage.setItem('history_filter', newFilter);
+  };
   
   const combinedHistory = useMemo(() => [
     ...deliveries.map((d) => ({ ...d, type: 'delivery' as const })),
@@ -57,6 +71,11 @@ export function HistoryList({ deliveries, collections, visits, shipments, onDele
     ...visits.map((v) => ({ ...v, type: 'visit' as const })),
     ...shipments.map((s) => ({ ...s, type: 'shipment' as const })),
   ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()), [deliveries, collections, visits, shipments]);
+
+  const dialogContentRefs = useMemo(() => combinedHistory.reduce<{[key: string]: React.RefObject<HTMLDivElement>}>((acc, item) => {
+    acc[item.id] = createRef<HTMLDivElement>();
+    return acc;
+  }, {}), [combinedHistory]);
 
   const filteredHistory = useMemo(() => {
     if (filter === 'all') return combinedHistory;
@@ -67,7 +86,6 @@ export function HistoryList({ deliveries, collections, visits, shipments, onDele
     const visitAddresses = visits.map(v => encodeURIComponent(v.schoolAddress));
     if (visitAddresses.length === 0) return;
 
-    // Use o primeiro como destino e o resto como waypoints
     const destination = visitAddresses[0];
     const waypoints = visitAddresses.slice(1).join('|');
     
@@ -79,6 +97,35 @@ export function HistoryList({ deliveries, collections, visits, shipments, onDele
     window.open(url, '_blank');
   };
 
+  const handleDownloadPdf = (itemId: string) => {
+    const dialogContentRef = dialogContentRefs[itemId];
+    if (!dialogContentRef?.current) return;
+    setIsGeneratingPdf(itemId);
+
+    html2canvas(dialogContentRef.current, {
+      useCORS: true, 
+      backgroundColor: '#1e293b',
+      onclone: (document) => {
+        const images = document.getElementsByTagName('img');
+        for (let i = 0; i < images.length; i++) {
+          images[i].style.display = 'block';
+        }
+      }
+    }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      });
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+      pdf.save(`registro-${itemId}.pdf`);
+      setIsGeneratingPdf(null);
+    }).catch(err => {
+      console.error("Erro ao gerar PDF:", err);
+      setIsGeneratingPdf(null);
+    });
+  };
 
   if (combinedHistory.length === 0) {
     return (
@@ -129,7 +176,7 @@ export function HistoryList({ deliveries, collections, visits, shipments, onDele
           </Button>
         )}
       </div>
-       <Tabs defaultValue="all" onValueChange={(value) => setFilter(value as any)} className="w-full">
+       <Tabs value={filter} onValueChange={(value) => handleFilterChange(value as FilterType)} className="w-full">
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="all">Todos</TabsTrigger>
           <TabsTrigger value="delivery">Entregas</TabsTrigger>
@@ -147,9 +194,9 @@ export function HistoryList({ deliveries, collections, visits, shipments, onDele
                 {renderIcon(item.type)}
                 <span className="truncate flex-1">{item.schoolName}</span>
                  {item.synced ? (
-                  <Cloud className="w-5 h-5 text-green-400" title="Sincronizado" />
+                  <span title="Sincronizado"><Cloud className="w-5 h-5 text-green-400" /></span>
                 ) : (
-                  <CloudOff className="w-5 h-5 text-gray-500" title="Não sincronizado" />
+                  <span title="Não sincronizado"><CloudOff className="w-5 h-5 text-gray-500" /></span>
                 )}
               </CardTitle>
               <CardDescription className="text-slate-400">
@@ -215,74 +262,79 @@ export function HistoryList({ deliveries, collections, visits, shipments, onDele
             </CardFooter>
           </Card>
            <DialogContent className="bg-slate-800 border-slate-700 text-white">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-3">
-                 {renderIcon(item.type)}
-                {item.schoolName}
-              </DialogTitle>
-              <DialogDescription>
-                Detalhes do registro de {item.type === 'delivery' ? 'entrega' : item.type === 'collection' ? 'recolhimento' : item.type === 'visit' ? 'visita' : 'envio'}.
-                 <span className={cn('ml-2 text-xs font-bold', item.synced ? 'text-green-400' : 'text-gray-500')}>
-                  ({item.synced ? 'Salvo na nuvem' : 'Pendente de envio'})
-                </span>
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-2 py-4">
-              <p><span className="font-semibold">Data:</span> {new Date(item.createdAt).toLocaleString('pt-BR')}</p>
-              {item.type === 'visit' ? (
-                <>
-                  {item.inep && <p><span className="font-semibold">INEP:</span> {item.inep}</p>}
-                  <p><span className="font-semibold">Endereço:</span> {item.schoolAddress}</p>
-                </>
-              ) : item.type === 'shipment' ? (
-                <>
-                  {item.department && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}
-                  <p><span className="font-semibold">Remetente:</span> {item.sender}</p>
-                  <p><span className="font-semibold">Item:</span> {item.item}</p>
-                  <p><span className="font-semibold">Método de Envio:</span> {item.shippingMethod}</p>
-                  <p><span className="font-semibold">Status:</span> {item.shippingStatus}</p>
-                  {item.trackingCode && <p><span className="font-semibold">Cód. Rastreio:</span> {item.trackingCode}</p>}
-                  {item.photoDataUri && (
-                    <div className="mt-4">
-                      <p className="font-semibold mb-2">Foto:</p>
-                      <Image
-                        src={item.photoDataUri}
-                        alt="Foto do registro"
-                        width={500}
-                        height={500}
-                        className="rounded-lg object-contain"
-                      />
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  <p><span className="font-semibold">Item:</span> {item.item}</p>
-                  <p><span className="font-semibold">Responsável:</span> {item.responsibleParty}</p>
-                  <p><span className="font-semibold">Função:</span> {item.role}</p>
-                  {item.department && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}
-                  <p><span className="font-semibold">Telefone:</span> {item.phoneNumber}</p>
-                  {item.observations && <p><span className="font-semibold">Observações:</span> {item.observations}</p>}
-                  {item.photoDataUri && (
-                    <div className="mt-4">
-                      <p className="font-semibold mb-2">Foto:</p>
-                      <Image
-                        src={item.photoDataUri}
-                        alt="Foto do registro"
-                        width={500}
-                        height={500}
-                        className="rounded-lg object-contain"
-                      />
-                    </div>
-                  )}
-                </>
-              )}
+            <div ref={dialogContentRefs[item.id]}>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-3">
+                  {renderIcon(item.type)}
+                  {item.schoolName}
+                </DialogTitle>
+                <DialogDescription>
+                  Detalhes do registro de {item.type === 'delivery' ? 'entrega' : item.type === 'collection' ? 'recolhimento' : item.type === 'visit' ? 'visita' : 'envio'}.
+                  <span className={cn('ml-2 text-xs font-bold', item.synced ? 'text-green-400' : 'text-gray-500')}>
+                    ({item.synced ? 'Salvo na nuvem' : 'Pendente de envio'})
+                  </span>
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-2 py-4">
+                <p><span className="font-semibold">Data:</span> {new Date(item.createdAt).toLocaleString('pt-BR')}</p>
+                {item.type === 'visit' ? (
+                  <>
+                    {item.inep && <p><span className="font-semibold">INEP:</span> {item.inep}</p>}
+                    <p><span className="font-semibold">Endereço:</span> {item.schoolAddress}</p>
+                  </>
+                ) : item.type === 'shipment' ? (
+                  <>
+                    {item.department && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}
+                    <p><span className="font-semibold">Remetente:</span> {item.sender}</p>
+                    <p><span className="font-semibold">Item:</span> {item.item}</p>
+                    <p><span className="font-semibold">Método de Envio:</span> {item.shippingMethod}</p>
+                    <p><span className="font-semibold">Status:</span> {item.shippingStatus}</p>
+                    {item.trackingCode && <p><span className="font-semibold">Cód. Rastreio:</span> {item.trackingCode}</p>}
+                    {item.photoDataUri && (
+                      <div className="mt-4">
+                        <p className="font-semibold mb-2">Foto:</p>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={item.photoDataUri}
+                          alt="Foto do registro"
+                          className="rounded-lg object-contain w-full h-auto"
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <p><span className="font-semibold">Item:</span> {item.item}</p>
+                    <p><span className="font-semibold">Responsável:</span> {item.responsibleParty}</p>
+                    <p><span className="font-semibold">Função:</span> {item.role}</p>
+                    {item.department && <p><span className="font-semibold">Secretaria:</span> {item.department}</p>}
+                    <p><span className="font-semibold">Telefone:</span> {item.phoneNumber}</p>
+                    {item.observations && <p><span className="font-semibold">Observações:</span> {item.observations}</p>}
+                    {item.photoDataUri && (
+                      <div className="mt-4">
+                        <p className="font-semibold mb-2">Foto:</p>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={item.photoDataUri}
+                          alt="Foto do registro"
+                          className="rounded-lg object-contain w-full h-auto"
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
-             <DialogClose asChild>
-                <Button type="button" variant="outline" className="w-full transition-transform transform hover:scale-105 bg-accent hover:bg-accent/90 text-accent-foreground border-accent">
-                  Fechar
-                </Button>
-            </DialogClose>
+            <div className="flex gap-2 pt-4">
+              <DialogClose asChild>
+                  <Button type="button" variant="outline" className="w-full transition-transform transform hover:scale-105 bg-accent hover:bg-accent/90 text-accent-foreground border-accent">
+                    Fechar
+                  </Button>
+              </DialogClose>
+              <Button onClick={() => handleDownloadPdf(item.id)} variant="outline" className="w-full bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 border-blue-500/30 hover:text-blue-200" disabled={isGeneratingPdf === item.id}>
+                {isGeneratingPdf === item.id ? 'Gerando...' : <><Download className="mr-2 h-4 w-4" /> Baixar PDF</>}
+              </Button>
+            </div>
           </DialogContent>
          </Dialog>
       ))}
