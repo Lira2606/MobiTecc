@@ -21,12 +21,13 @@ function AppContent({ children }: { children: React.ReactNode }) {
   const [isShowingSplash, setIsShowingSplash] = useState(true);
 
   useEffect(() => {
-    const hideStatusBar = async () => {
+    const configureStatusBar = async () => {
       if (Capacitor.isNativePlatform()) {
+        await StatusBar.setOverlaysWebView({ overlay: true });
         await StatusBar.hide();
       }
     };
-    hideStatusBar();
+    configureStatusBar();
   }, []);
 
   useEffect(() => {
@@ -41,17 +42,10 @@ function AppContent({ children }: { children: React.ReactNode }) {
   
   return (
     <div className={cn(
-      'flex items-center justify-center min-h-screen p-4 font-sans bg-gray-900'
+      'min-h-screen w-full font-sans bg-gray-900'
     )}>
-       <div className="mobile-shell w-full max-w-[450px]">
-        <div 
-          id="mobile-screen" 
-          className="mobile-screen w-full rounded-3xl overflow-hidden relative flex flex-col"
-        >
-         {showSplash ? <SplashScreen /> : children}
-        </div>
-      </div>
-       <Toaster />
+      {showSplash ? <SplashScreen /> : children}
+      <Toaster />
     </div>
   )
 }

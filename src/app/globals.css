@@ -50,18 +50,6 @@
 }
 
 @layer components {
-  .mobile-shell {
-      background: #111;
-      padding: 1rem; 
-      border-radius: 2.5rem; 
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0,0,0,0.5);
-  }
-  .mobile-screen {
-      max-width: 420px; 
-      height: 850px; 
-      background-color: #0c142c;
-      overflow: hidden;
-  }
   .glass-effect {
       background-color: hsl(var(--muted));
       border: 1px solid rgba(55, 65, 81, 0.3);
