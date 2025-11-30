@@ -1,0 +1,6 @@
+{
+  "appId": "com.mobitec.app",
+  "appName": "MobiTec",
+  "webDir": "out",
+  "bundledWebRuntime": false
+}

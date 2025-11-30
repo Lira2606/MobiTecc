@@ -50,18 +50,7 @@
 }
 
 @layer components {
-  .mobile-shell {
-      background: #111;
-      padding: 1rem; 
-      border-radius: 2.5rem; 
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0,0,0,0.5);
-  }
-  .mobile-screen {
-      max-width: 420px; 
-      height: 850px; 
-      background-color: #0c142c;
-      overflow: hidden;
-  }
+
   .glass-effect {
       background-color: rgba(30, 41, 59, 0.5); /* slate-800 com 50% de opacidade */
       backdrop-filter: blur(8px);
