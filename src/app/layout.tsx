@@ -7,6 +7,8 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import './globals.css';
 import { useEffect, useState } from 'react';
+import { StatusBar } from '@capacitor/status-bar';
+import { Capacitor } from '@capacitor/core';
 
 const inter = Inter({ 
   subsets: ['latin'], 
@@ -17,6 +19,15 @@ const inter = Inter({
 function AppContent({ children }: { children: React.ReactNode }) {
   const { isLoading } = useAuth();
   const [isShowingSplash, setIsShowingSplash] = useState(true);
+
+  useEffect(() => {
+    const hideStatusBar = async () => {
+      if (Capacitor.isNativePlatform()) {
+        await StatusBar.hide();
+      }
+    };
+    hideStatusBar();
+  }, []);
 
   useEffect(() => {
     const splashTimer = setTimeout(() => {
